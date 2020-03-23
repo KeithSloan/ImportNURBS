@@ -33,7 +33,7 @@ def insert(filename,docname):
 
 def process3DM(doc, filename) :
     FreeCAD.Console.PrintMessage('Import 3DM file : '+filename+'\n')
-    FreeCAD.Console.PrintMessage('Import3DM Version 0.1\n')
+    FreeCAD.Console.PrintMessage('Import3DM Version 0.01\n')
 
     pathName = os.path.dirname(os.path.normpath(filename))
     print("Add code to parse 3DM file")
