@@ -1,2 +1,2 @@
-# FreeCAD_ImportNURBS
+# ImportNURBS
 Add Import of 3DM files to FreeCAD 
