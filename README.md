@@ -14,3 +14,9 @@
 # Sample Rhino files
 
   Can be downloaded from https://www.rhino3d.com/download/opennurbs/6/opennurbs6samples 
+
+# Developers 
+  
+  Chris Grellier
+  Keith Sloan
+  
