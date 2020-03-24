@@ -9,7 +9,7 @@ import FreeCADGui
 import Part
 
 try:
-    import rhino3dm 
+    import rhino3dm as r3
 
 except ModuleNotFoundError:
     FreeCAD.Console.PrintError("You must install rhino3dm first !")
@@ -41,20 +41,20 @@ def insert(filename,docname):
 class File3dm:
 
     def __init__(self, path):
-        self.f3dm = rhino3dm.File3dm.Read(path)
+        self.f3dm = r3.File3dm.Read(path)
 
     def parse_objects(self, doc=None):
         if not doc:
             doc = FreeCAD.newDocument("3dm import")
-            part = doc.addObject('App::Part','Part')
-            for i in range(len(self.f3dm.Objects)):
-                obj_fullname = "{}".format(self.f3dm.Objects[i].Geometry)
-                first_split = obj_fullname.split(".")
-                second_split = first_split[-1].split(" ")
-                print("-----------------\n{}".format(second_split[0]))
-                obj = self.import_geometry(doc, self.f3dm.Objects[i].Geometry)
-                if obj:
-                    part.addObject(obj)
+        part = doc.addObject('App::Part','Part')
+        for i in range(len(self.f3dm.Objects)):
+            obj_fullname = "{}".format(self.f3dm.Objects[i].Geometry)
+            first_split = obj_fullname.split(".")
+            second_split = first_split[-1].split(" ")
+            print("-----------------\n{}".format(second_split[0]))
+            obj = self.import_geometry(doc, self.f3dm.Objects[i].Geometry)
+            if obj:
+               part.addObject(obj)
 
     def import_geometry(self, doc, geo):
         if isinstance(geo, r3.Brep): #str(geo.ObjectType) == "ObjectType.Brep":
@@ -131,8 +131,7 @@ class File3dm:
 #		print("{}\n{}".format(uflatknots, vflatknots))
         bs = Part.BSplineSurface()
         bs.buildFromPolesMultsKnots(pts, mu, mv, ku, kv, \
-                uperiodic, vperiodic, nu.Degree(0), \
-                nu.Degree(1), weights)
+                uperiodic, vperiodic, nu.Degree(0), nu.Degree(1), weights)
         if mu[0] < (nu.Degree(0)+1):
             bs.setUPeriodic()
         if mv[0] < (nu.Degree(1)+1):
@@ -163,7 +162,7 @@ def process3DM(doc, filename) :
 
     fi = File3dm(filename)
     fi.parse_objects(doc)
-    Gui.SendMsgToActiveView("ViewFit")
+    FreeCADGui.SendMsgToActiveView("ViewFit")
 
     #pathName = os.path.dirname(os.path.normpath(filename))
 
