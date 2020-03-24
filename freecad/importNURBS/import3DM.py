@@ -15,7 +15,7 @@ except ModuleNotFoundError:
     FreeCAD.Console.PrintError("You must install rhino3dm first !")
     exit()
 
-print(dir(r3))
+#print(dir(r3))
 
 if open.__module__ == '__builtin__':
     pythonopen = open # to distinguish python built-in open function from the one declared here
