@@ -15,6 +15,8 @@ except ModuleNotFoundError:
     FreeCAD.Console.PrintError("You must install rhino3dm first !")
     exit()
 
+print(dir(r3))
+
 if open.__module__ == '__builtin__':
     pythonopen = open # to distinguish python built-in open function from the one declared here
 
@@ -57,6 +59,9 @@ class File3dm:
                part.addObject(obj)
 
     def import_geometry(self, doc, geo):
+        print('Geometry type')
+        print(type(geo))
+
         if isinstance(geo, r3.Brep): #str(geo.ObjectType) == "ObjectType.Brep":
             #print("Brep object")
             print("is solid : {}".format(geo.IsSolid))
@@ -84,8 +89,42 @@ class File3dm:
 #			obj = doc.addObject("Part::Feature","Edges")
 #			obj.Shape = com
             return obj
+        if isinstance(geo, r3.BezierCurve):
+            print("Bezier Curve Object")
+
+        if isinstance(geo, r3.Bitmap):
+            print("Bitmap Object")
+
+        if isinstance(geo, r3.Box):
+            print("Box Object")
+
+        if isinstance(geo, r3.Circle):
+            print("Circle Object")
+
+        if isinstance(geo, r3.Cone):
+            print("Cone Object")
+
         if isinstance(geo, r3.Curve):
-            print("Curve object")
+            print("Curve Object")
+
+        if isinstance(geo, r3.Cylinder):
+            print("Cylinder Object")
+
+        if isinstance(geo, r3.Ellipse):
+            print("Ellipse Object")
+
+        if isinstance(geo, r3.Mesh):
+            print("Mesh Object")
+
+        if isinstance(geo, r3.NurbsSurface):
+            print("NurbsSurface Object")
+
+        if isinstance(geo, r3.PointCloud):
+            print("PointCloud Object")
+
+        if isinstance(geo, r3.Surface):
+            print("Surface Object")
+
 
     def create_curve(self, edge):
         nc = edge.ToNurbsCurve()
