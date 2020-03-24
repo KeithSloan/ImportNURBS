@@ -6,7 +6,8 @@
 
  * sudo apt install python3-pip
  * pip3 install --user rhino3dm
- * Change directory to .FreeCAD/Mod
+ * Change directory to .FreeCAD/Mod   
+   i.e. with a dot
  * git clone  https://github.com/KeithSloan/ImportNURBS.git
  * start or restart FreeCAD
  
