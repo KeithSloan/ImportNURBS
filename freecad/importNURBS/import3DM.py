@@ -137,7 +137,7 @@ class File3dm:
             bs.setUPeriodic()
         if mv[0] < (nu.Degree(1)+1):
             bs.setVPeriodic()
-            return bs
+        return bs
 
     def getFCKnots(self,fknots):
         k = list(fknots)
