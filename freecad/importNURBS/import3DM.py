@@ -67,13 +67,14 @@ class File3dm:
             print("has {} edges".format(len(geo.Edges)))
             shapes = []
             for i in range(len(geo.Faces)):
-                #print(geo.Faces[i])
+                print(geo.Faces[i])
                 s = self.create_surface(geo.Faces[i])
+                print(s)
                 shapes.append(s.toShape())
                 #print("Face {} has {} edges".format(i,len(geo.Faces[i].Edges)))
-                com = Part.Compound(shapes)
-                obj = doc.addObject("Part::Feature","Faces")
-                obj.Shape = com
+            com = Part.Compound(shapes)
+            obj = doc.addObject("Part::Feature","Faces")
+            obj.Shape = com
 #	        	shapes = []
 #			for i in range(len(geo.Edges)):
 #				#print(geo.Faces[i])
@@ -82,9 +83,9 @@ class File3dm:
 #			com = Part.Compound(shapes)
 #			obj = doc.addObject("Part::Feature","Edges")
 #			obj.Shape = com
-                return obj
-            if isinstance(geo, r3.Curve):
-                print("Curve object")
+            return obj
+        if isinstance(geo, r3.Curve):
+            print("Curve object")
 
     def create_curve(self, edge):
         nc = edge.ToNurbsCurve()
@@ -118,8 +119,8 @@ class File3dm:
                 #print(FreeCAD.Vector(p.X,p.Y,p.Z))
                 row.append(FreeCAD.Vector(p.X,p.Y,p.Z))
                 wrow.append(p.W)
-                pts.append(row)
-                weights.append(wrow)
+            pts.append(row)
+            weights.append(wrow)
         ku, mu = self.getFCKnots(nu.KnotsU)
         kv, mv = self.getFCKnots(nu.KnotsV)
         uperiodic = False #mu[0] <= nu.Degree(0)
