@@ -17,6 +17,6 @@
 
 # Developers 
   
-  Chris Grellier
-  Keith Sloan
+ * Chris Grellier
+ * Keith Sloan
   
