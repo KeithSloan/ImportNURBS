@@ -40,40 +40,6 @@ def insert(filename,docname):
     if filename.lower().endswith('.3dm'):
         process3DM(doc,filename)
 
-def addMesh(doc, r3mesh) :
-    # Return Object Mesh
-    import Mesh
-    fcMesh = Mesh.Mesh()
-    obj = doc.addObject('Mesh::Feature')
-    obj.Mesh = Mesh.Mesh()
-    print('Quad Count : '+str(r3mesh.Faces.QuadCount))
-    print('Triangle Count : '+str(r3mesh.Faces.TriangleCount))
-    # FreeCAD only supports Triangles
-    print(r3mesh.Faces.ConvertQuadsToTriangles())
-    print(len(r3mesh.Faces))
-    print('Count : '+str(r3mesh.Faces.Count))
-    print('Quad Count : '+str(r3mesh.Faces.QuadCount))
-    print('Vertices Count : '+str(len(r3mesh.Vertices)))
-    #print(type(r3mesh.Faces))
-    for m in range(r3mesh.Faces.TriangleCount) :
-        #print('Face')
-        mf = r3mesh.Faces[m]
-        #print(type(mf))
-        #print(dir(mf))
-        fval = () 
-        for r in range(0,3) :
-            f = mf[r]
-            #print('X : '+str(r3mesh.Vertices[f].X)+ \
-            #     ' Y : '+str(r3mesh.Vertices[f].Y)+ \
-            #     ' Z : '+str(r3mesh.Vertices[f].Z)) 
-            fval = fval + (float(r3mesh.Vertices[f].X), \
-                        float(r3mesh.Vertices[f].Y), \
-                        float(r3mesh.Vertices[f].Z) )
-        fcMesh.addFacet(*fval)
-    obj.Mesh = fcMesh
-
-
-
 class File3dm:
 
     def __init__(self, path):
@@ -152,10 +118,20 @@ class File3dm:
             print("Mesh Object")
             return(self.create_mesh(doc, geo))
 
+        if isinstance(geo, r3.NurbsCurve):
+            print("NurbsCurve Object")
+            #print(dir(geo))
+            obj = doc.addObject("Part::Feature","NurbsCurve")
+            obj.Shape = self.create_curve(geo).toShape()
+            return obj
+        
         if isinstance(geo, r3.NurbsSurface):
             print("NurbsSurface Object")
             print(dir(geo))
             return(self.create_surface(geo))
+
+        if isinstance(geo, r3.PolyCurve):
+            print("PolyCurve Object")
 
         if isinstance(geo, r3.PointCloud):
             print("PointCloud Object")
@@ -181,7 +157,7 @@ class File3dm:
             nc.Degree, weights)
         if mu[0] < (nc.Degree+1):
             bs.setPeriodic()
-            return bs
+        return bs
 
     def create_surface(self, surf):
         nu = surf.ToNurbsSurface()
