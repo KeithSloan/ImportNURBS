@@ -90,29 +90,45 @@ class File3dm:
 #			obj.Shape = com
             return obj
 
+        if isinstance(geo, r3.ArcCurve):
+            print("Arc Curve Object")
+            return
+        
         if isinstance(geo, r3.BezierCurve):
             print("Bezier Curve Object")
+            return
 
         if isinstance(geo, r3.Bitmap):
             print("Bitmap Object")
+            return
 
         if isinstance(geo, r3.Box):
             print("Box Object")
+            return
 
         if isinstance(geo, r3.Circle):
             print("Circle Object")
+            return
 
         if isinstance(geo, r3.Cone):
             print("Cone Object")
+            return
 
         if isinstance(geo, r3.Curve):
             print("Curve Object")
+            return
 
         if isinstance(geo, r3.Cylinder):
             print("Cylinder Object")
+            return
 
         if isinstance(geo, r3.Ellipse):
             print("Ellipse Object")
+            return
+
+        if isinstance(geo, r3.LineCurve):
+            print("Line Curve")
+            return
 
         if isinstance(geo, r3.Mesh):
             print("Mesh Object")
@@ -132,12 +148,15 @@ class File3dm:
 
         if isinstance(geo, r3.PolyCurve):
             print("PolyCurve Object")
+            return
 
         if isinstance(geo, r3.PointCloud):
             print("PointCloud Object")
+            return
 
         if isinstance(geo, r3.Surface):
             print("Surface Object")
+            return
 
 
     def create_curve(self, edge):
