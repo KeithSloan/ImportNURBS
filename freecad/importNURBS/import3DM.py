@@ -1,21 +1,14 @@
-__title__ = "import3DM"
-__author__ = "Keith Sloan (keithsloan52) : Christophe Grellier (Chris_G)"
-__license__ = "LGPL 2.1"
-__doc__ = "import of 3DM file"
-
 import FreeCAD 
 import os, io, sys
 import FreeCADGui 
 import Part
 
 try:
-    import rhino3dm as r3
+  import rhino3dm as r3
 
-except ModuleNotFoundError:
-    FreeCAD.Console.PrintError("You must install rhino3dm first !")
-    exit()
-
-#print(dir(r3))
+except: 
+  FreeCAD.Console.PrintError("You must install rhino3dm first !")
+  exit()
 
 if open.__module__ == '__builtin__':
     pythonopen = open # to distinguish python built-in open function from the one declared here
