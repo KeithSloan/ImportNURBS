@@ -15,6 +15,10 @@
 
   Can be downloaded from https://www.rhino3d.com/download/opennurbs/6/opennurbs6samples 
 
+# Acknowledgements
+
+  * Icon design by Freepik
+
 # Developers 
   
  * Chris Grellier
