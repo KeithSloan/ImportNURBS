@@ -3,12 +3,14 @@ import os, io, sys
 import FreeCADGui 
 import Part
 
-try:
-  import rhino3dm as r3
+#try:
+#  import rhino3dm as r3
+#
+#except: 
+#  FreeCAD.Console.PrintError("You must install rhino3dm first !")
+#  exit()
 
-except: 
-  FreeCAD.Console.PrintError("You must install rhino3dm first !")
-  exit()
+import rhino3dm as r3
 
 if open.__module__ == '__builtin__':
     pythonopen = open # to distinguish python built-in open function from the one declared here
