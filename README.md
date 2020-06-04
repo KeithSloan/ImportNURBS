@@ -2,7 +2,7 @@
 
   Add Import of 3DM files to FreeCAD 
 
-# Installation
+# Installation ( Linux )
 
  * sudo apt install python3-pip
  * pip3 install --user rhino3dm
