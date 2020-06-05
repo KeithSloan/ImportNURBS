@@ -1,8 +1,17 @@
 # ImportNURBS
 
-  Add Import of 3DM files to FreeCAD 
+  Add Import of 3DM files to FreeCAD
+  
+# Requirements 
 
-# Installation ( Linux )
+* rhino3dm - Open Python Rhino 3dm library 
+  
+# Installation - Add on Manager
+
+ * The workbench is available via the FreeCAD AddonManager
+ * However users may have to install rhino3dm depending on OS.
+
+# Alternate Installation ( Linux )
 
  * sudo apt install python3-pip
  * pip3 install --user rhino3dm
