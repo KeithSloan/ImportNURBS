@@ -4,7 +4,7 @@
   
 # Requirements 
 
-* rhino3dm - Open Python Rhino 3dm library 
+* rhino3dm - Open Python Rhino 3dm library - Which seems to require Python 3.7 
   
 # Installation - Add on Manager
 
