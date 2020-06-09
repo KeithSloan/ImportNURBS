@@ -10,6 +10,15 @@
 
  * The workbench is available via the FreeCAD AddonManager
  * However users may have to install rhino3dm depending on OS.
+ * One suggestion
+     - Start FreeCAD
+     - In python console
+         import sys
+         print(sys.path)
+         
+     - Select one the the directories listed
+       pip3 install rhino3dm -t <directory path>
+     - restart FreeCAD
 
 # Alternate Installation ( Linux )
 
