@@ -17,7 +17,9 @@
          print(sys.path)
          
      - Select one the the directories listed
-       pip3 install rhino3dm -t <directory path>
+     
+       pip3 install rhino3dm -t [directory path]
+     
      - restart FreeCAD
 
 # Alternate Installation ( Linux )
