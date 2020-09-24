@@ -13,8 +13,8 @@
  * One suggestion
      - Start FreeCAD
      - In python console
-         import sys
-         print(sys.path)
+        - import sys
+        - print(sys.path)
          
      - Select one the the directories listed
      
