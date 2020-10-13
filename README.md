@@ -1,7 +1,7 @@
 # Help with Development
 
 Is there any Rhino users out there willing to help with development by
-creating a number of small files and an accompaning screenshot?
+creating a number of small test files and an accompaning screenshot?
 
 If yes please see https://forum.freecadweb.org/viewtopic.php?f=3&t=47430
 
