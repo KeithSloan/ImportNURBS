@@ -1,15 +1,33 @@
+# Help with Development
+
+Is there any Rhino users out there willing to help with development by
+creating a number of small test files and an accompaning screenshot?
+
+If yes please see https://forum.freecadweb.org/viewtopic.php?f=3&t=47430
+
 # ImportNURBS
 
   Add Import of 3DM files to FreeCAD
   
 # Requirements 
 
-* rhino3dm - Open Python Rhino 3dm library 
+* rhino3dm - Open Python Rhino 3dm library - Which seems to require Python 3.7 
   
 # Installation - Add on Manager
 
  * The workbench is available via the FreeCAD AddonManager
  * However users may have to install rhino3dm depending on OS.
+ * One suggestion
+     - Start FreeCAD
+     - In python console
+        - import sys
+        - print(sys.path)
+         
+     - Select one the the directories listed
+     
+       pip3 install rhino3dm -t [directory path]
+     
+     - restart FreeCAD
 
 # Alternate Installation ( Linux )
 
