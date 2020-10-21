@@ -8,7 +8,7 @@ import Part
 #
 #except: 
 #  FreeCAD.Console.PrintError("You must install rhino3dm first !")
-#  exit()
+#  exit(0)
 
 import rhino3dm as r3
 
