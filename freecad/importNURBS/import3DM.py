@@ -139,6 +139,13 @@ class File3dm:
             print(geo.PathTangent)
             print(geo.PointAt)
             print(geo.GetPathPlane)
+            print('Profile Count : '+str(geo.ProfileCount))
+            for i in range(geo.ProfileCount) :
+                c = geo.Profile3d(i,0.0)
+                print(c)
+                print(c.IsCircle())
+                print(c.Dimension)
+                print(c.Radius)
             print(geo.Profile3d)
             print(dir(geo))
             return
