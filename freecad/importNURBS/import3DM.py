@@ -58,7 +58,7 @@ class File3dm:
         print(type(geo))
 
         if isinstance(geo, r3.Brep): #str(geo.ObjectType) == "ObjectType.Brep":
-            #print("Brep object")
+            print("Brep object")
             print("is solid : {}".format(geo.IsSolid))
             print("is manifold : {}".format(geo.IsManifold))
             print("is surface : {}".format(geo.IsSurface))
@@ -87,42 +87,65 @@ class File3dm:
 
         if isinstance(geo, r3.ArcCurve):
             print("Arc Curve Object")
+            print(dir(geo))
             return
         
         if isinstance(geo, r3.BezierCurve):
             print("Bezier Curve Object")
+            print(dir(geo))
             return
 
         if isinstance(geo, r3.Bitmap):
             print("Bitmap Object")
+            print(dir(geo))
             return
 
         if isinstance(geo, r3.Box):
             print("Box Object")
+            print(dir(geo))
             return
 
         if isinstance(geo, r3.Circle):
             print("Circle Object")
+            print(dir(geo))
             return
 
         if isinstance(geo, r3.Cone):
             print("Cone Object")
+            print(dir(geo))
             return
 
         if isinstance(geo, r3.Curve):
             print("Curve Object")
+            print(dir(geo))
             return
 
         if isinstance(geo, r3.Cylinder):
             print("Cylinder Object")
+            print(dir(geo))
             return
 
         if isinstance(geo, r3.Ellipse):
             print("Ellipse Object")
+            print(dir(geo))
+            return
+
+        if isinstance(geo, r3.Extrusion):
+            print("Extrusion")
+            print('Is Cylinder : '+str(geo.IsCylinder()))
+            print(geo.NormalAt)
+            print(geo.PathStart)
+            print(geo.PathEnd)
+            print(geo.PathTangent)
+            print(geo.PointAt)
+            print(geo.GetPathPlane)
+            print(geo.Profile3d)
+            print(dir(geo))
             return
 
         if isinstance(geo, r3.LineCurve):
             print("Line Curve")
+            print(dir(geo))
             return
 
         if isinstance(geo, r3.Mesh):
@@ -143,16 +166,23 @@ class File3dm:
 
         if isinstance(geo, r3.PolyCurve):
             print("PolyCurve Object")
+            print(dir(geo))
             return
 
         if isinstance(geo, r3.PointCloud):
             print("PointCloud Object")
+            print(dir(geo))
             return
 
         if isinstance(geo, r3.Surface):
             print("Surface Object")
+            print(geo.IsCylinder)
+            print(geo.IsSolid)
+            print(dir(geo))
             return
 
+        print('Not yet handled')
+        print(dir(geo))
 
     def create_curve(self, edge):
         nc = edge.ToNurbsCurve()
