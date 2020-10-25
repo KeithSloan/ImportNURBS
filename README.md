@@ -1,9 +1,3 @@
-# Help with Development
-
-Is there any Rhino users out there willing to help with development by
-creating a number of small test files and an accompaning screenshot?
-
-If yes please see https://forum.freecadweb.org/viewtopic.php?f=3&t=47430
 
 # ImportNURBS
 
@@ -45,6 +39,7 @@ If yes please see https://forum.freecadweb.org/viewtopic.php?f=3&t=47430
 # Acknowledgements
 
   * Icon design by Freepik
+  * 3dm testCases kindly supplied by Jonne Neva (cheezebreeze)
 
 # Developers 
   
