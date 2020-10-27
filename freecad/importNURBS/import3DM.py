@@ -212,7 +212,7 @@ class File3dm:
 
     def create_surface(self, surf):
         nu = surf.ToNurbsSurface()
-        #print("{} x {}".format(nu.Degree(0), nu.Degree(1)))
+        print("{} x {}".format(nu.Degree(0), nu.Degree(1)))
         pts = []
         weights = []
         for u in range(nu.Points.CountU):
@@ -220,7 +220,7 @@ class File3dm:
             wrow = []
             for v in range(nu.Points.CountV):
                 p = nu.Points[u,v]
-                #print(FreeCAD.Vector(p.X,p.Y,p.Z))
+                print(FreeCAD.Vector(p.X,p.Y,p.Z))
                 row.append(FreeCAD.Vector(p.X,p.Y,p.Z))
                 wrow.append(p.W)
             pts.append(row)
@@ -229,11 +229,11 @@ class File3dm:
         kv, mv = self.getFCKnots(nu.KnotsV)
         uperiodic = False #mu[0] <= nu.Degree(0)
         vperiodic = False #mv[0] <= nu.Degree(1)
-#		print(list(nu.KnotsU))
-#		print(ku, mu)
-#		print(kv, mv)
-#		vflatknots = list(nu.KnotsV)
-#		print("{}\n{}".format(uflatknots, vflatknots))
+        print(list(nu.KnotsU))
+        print(ku, mu)
+        print(kv, mv)
+        vflatknots = list(nu.KnotsV)
+        print("{}\n{}".format(vflatknots, vflatknots))
         bs = Part.BSplineSurface()
         bs.buildFromPolesMultsKnots(pts, mu, mv, ku, kv, \
                 uperiodic, vperiodic, nu.Degree(0), nu.Degree(1), weights)
