@@ -199,7 +199,7 @@ class File3dm:
         for u in range(len(nc.Points)):
             p = nc.Points[u]
             #print(FreeCAD.Vector(p.X,p.Y,p.Z))
-            pts.append(FreeCAD.Vector(p.X,p.Y,p.Z))
+            pts.append(FreeCAD.Vector(p.X/p.W,p.Y/p.W,p.Z/p.W))
             weights.append(p.W)
         ku, mu = self.getFCKnots(nc.Knots)
         periodic = False #mu[0] <= nu.Degree(0)
@@ -215,23 +215,30 @@ class File3dm:
         print("{} x {}".format(nu.Degree(0), nu.Degree(1)))
         pts = []
         weights = []
+        print('Control Points')
+        print('CountU : '+str(nu.Points.CountU))
+        print('CountV : '+str(nu.Points.CountV))
         for u in range(nu.Points.CountU):
             row = []
             wrow = []
             for v in range(nu.Points.CountV):
                 p = nu.Points[u,v]
                 print(FreeCAD.Vector(p.X,p.Y,p.Z))
-                row.append(FreeCAD.Vector(p.X,p.Y,p.Z))
+                row.append(FreeCAD.Vector(p.X/p.W,p.Y/p.W,p.Z/p.W))
                 wrow.append(p.W)
             pts.append(row)
             weights.append(wrow)
+        print('Knots')
         ku, mu = self.getFCKnots(nu.KnotsU)
         kv, mv = self.getFCKnots(nu.KnotsV)
         uperiodic = False #mu[0] <= nu.Degree(0)
         vperiodic = False #mv[0] <= nu.Degree(1)
         print(list(nu.KnotsU))
+        print('ku mu')
         print(ku, mu)
+        print('kv mv')
         print(kv, mv)
+        print('Flat knots')
         vflatknots = list(nu.KnotsV)
         print("{}\n{}".format(vflatknots, vflatknots))
         bs = Part.BSplineSurface()
