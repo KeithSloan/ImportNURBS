@@ -116,8 +116,24 @@ class File3dm:
             return
 
         if isinstance(geo, r3.Curve):
+            import inspect
             print("Curve Object")
             print(dir(geo))
+            print(geo.CurvatureAt)
+            print(geo.PolyCurveParameter)
+            print(geo.SegmentCount)
+            print(geo.SegmentCurve)
+            print(geo.SegmentCurveParameter)
+            print(geo.SegmentIndex)
+            print(geo.ToNurbsCurve())
+            nc = geo.ToNurbsCurve()
+            print(nc)
+            print(dir(nc))
+            print(nc.Degree)
+            #cpc = nc.CreateControlPointCurve()
+            #print(cpc)
+            #print(inspect.getargspec(nc.CreateControlPointCurve))
+            print(dir(nc.CreateControlPointCurve))
             return
 
         if isinstance(geo, r3.Cylinder):
