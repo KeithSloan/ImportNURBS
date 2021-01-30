@@ -93,7 +93,16 @@ class File3dm:
 
         if isinstance(geo, r3.LineCurve): # Must be before Curve
            print("Line Curve")
-           print(dir(geo))
+           #print(dir(geo))
+           obj = doc.addObject("Part::Line","Line Curve?")
+           #print(dir(obj))
+           obj.X1 = geo.PointAtStart.X
+           obj.Y1 = geo.PointAtStart.Y
+           obj.Z1 = geo.PointAtStart.Z
+           obj.X2 = geo.PointAtEnd.X
+           obj.Y2 = geo.PointAtEnd.Y
+           obj.Z2 = geo.PointAtEnd.Z
+           obj.recompute()
            return
 
         if isinstance(geo, r3.NurbsCurve): # Must be before Curve
@@ -118,16 +127,42 @@ class File3dm:
         if isinstance(geo, r3.BezierCurve):
            print("Bezier Curve Object")
            print(dir(geo))
+           obj = doc.addObject("Part::Feature","Bezier")
+           obj.Shape = self.create_curve(geo).toShape()
+           obj.recompute()
            return
 
         if isinstance(geo, r3.PolylineCurve):
            print("PolyLineCurve Object")
-           print(dir(geo))
+           print("Polgon Line?")
+           #print(dir(geo))
+           print('Is Polyline : '+str(geo.IsPolyline()))
+           print('Point Count : '+str(geo.PointCount))
+           #pl = geo.ToPolyline()
+           #print(pl)
+           #print(dir(pl))
+           obj = doc.addObject("Part::Polygon","PolyLine Curve?")
+           #print(dir(obj))
+           pList = []
+           for i in range(geo.PointCount) :
+               p = geo.Point(i)
+               #print(p.X)
+               #print(p.Y)
+               #print(p.Z)
+               pList.append(FreeCAD.Vector(p.X,p.Y,p.Z))
+           #print(pList)
+           #obj.Shape = Part.makePolygon(pList)
+           obj.Nodes = pList
+           obj.recompute()
            return
 
         if isinstance(geo, r3.PolyCurve):
            print("PolyCurve Object")
-           print(dir(geo))
+           #self.printCurveInfo(geo)
+           obj = doc.addObject("Part::Feature","PolyCurve")
+           obj.Shape = self.create_curve(geo).toShape()
+           obj.recompute()
+           #print(dir(geo))
            return
 
         if isinstance(geo, r3.Ellipse):
@@ -178,6 +213,7 @@ class File3dm:
 
         if isinstance(geo, r3.Extrusion):
            print("Extrusion")
+           print(dir(geo))
            print('Is Cylinder : '+str(geo.IsCylinder()))
            print(geo.NormalAt)
            print(geo.PathStart)
@@ -187,13 +223,24 @@ class File3dm:
            print(geo.GetPathPlane)
            print('Profile Count : '+str(geo.ProfileCount))
            for i in range(geo.ProfileCount) :
+               print(i)
                c = geo.Profile3d(i,0.0)
                print(c)
                print(c.IsCircle())
                print(c.Dimension)
                print(c.Radius)
            print(geo.Profile3d)
-           print(dir(geo))
+           if geo.IsCylinder() == True :
+              height = geo.PathStart.Z - geo.PathEnd.Z
+              print('Height : '+str(height))
+              c = geo.Profile3d(0,0.0)
+              radius = c.Radius
+              print('Radius : '+str(radius))
+           obj = doc.addObject("Part::Cylinder","Extruded Cylinder")
+           obj.Height = height
+           obj.Radius = radius
+           obj.recompute()
+           #print(dir(geo))
            return
 
         if isinstance(geo, r3.Mesh):
@@ -223,14 +270,22 @@ class File3dm:
     def printCurveInfo(self, geo) :
         print('Curve Info')
         print(dir(geo))
-        #print('IsArc     : ',geo.isArc())
-        #print('IsCircle  : ',geo.isCircle())
-        #print('IsEllipse : ',geo.isEllipse())
-        #print(geo.CurvatureAt)
-        #print(geo.SegmentCount)
-        #print(geo.SegmentCurve)
-        #print(geo.SegmentCurveParameter)
-        #print(geo.SegmentIndex)
+        print('IsArc     : ',geo.IsArc())
+        print('IsCircle  : ',geo.IsCircle())
+        print('IsEllipse : ',geo.IsEllipse())
+        print(geo.CurvatureAt)
+        print(dir(geo.CurvatureAt))
+        print(geo.SegmentCount)
+        print(geo.SegmentCurve)
+        print(dir(geo.SegmentCurve))
+        print(geo.SegmentCurveParameter)
+        print(dir(geo.SegmentCurveParameter))
+        print(geo.SegmentIndex)
+        print(dir(geo.SegmentIndex))
+        #cpc = geo.CreateControlPointCurve()
+        #print(dir(cpc))
+        nc = geo.ToNurbsCurve()
+        print(dir(nc))
 
     def create_curve(self, edge):
         nc = edge.ToNurbsCurve()
