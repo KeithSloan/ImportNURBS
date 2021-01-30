@@ -2,6 +2,11 @@
 # ImportNURBS
 
   Add Import of 3DM files to FreeCAD
+
+##########################################################
+# Some coded added lots more to do.                      #
+# Please report any problems as Issues - Thanks          #
+##########################################################
   
 # Requirements 
 
