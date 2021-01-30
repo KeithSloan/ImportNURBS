@@ -1,7 +1,7 @@
 import FreeCAD 
 import os, io, sys
 import FreeCADGui 
-import Part
+import Part, Draft, math
 
 #try:
 #  import rhino3dm as r3
@@ -34,6 +34,12 @@ def insert(filename,docname):
         doc=FreeCAD.newDocument(docname)
     if filename.lower().endswith('.3dm'):
         process3DM(doc,filename)
+
+def toFCvec(r3Dpnt) :
+    return(FreeCAD.Vector(r3Dpnt.X, r3Dpnt.Y, r3Dpnt.Z))
+
+def toFCangle(center, start) :
+    return(math.atan((start.Y - center.Y)/(start.X - center.Y))*math.pi/180)
 
 class File3dm:
 
@@ -99,8 +105,15 @@ class File3dm:
 
         if isinstance(geo, r3.ArcCurve):
            print("Arc Curve Object")
-           print(dir(geo))
-           return
+           obj = doc.addObject("Part::Circle","Arc")
+           #print(type(geo.Arc.Center))
+           obj.Placement.Base = toFCvec(geo.Arc.Center)
+           obj.Radius = geo.Radius
+           obj.Angle0 = startAngle = toFCangle(geo.Arc.Center,geo.PointAtStart)
+           obj.Angle1 = startAngle + geo.Arc.AngleDegrees
+           #print(dir(geo))
+           obj.recompute()
+           return obj
         
         if isinstance(geo, r3.BezierCurve):
            print("Bezier Curve Object")
