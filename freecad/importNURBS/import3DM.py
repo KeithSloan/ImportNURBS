@@ -85,112 +85,112 @@ class File3dm:
 #			obj.Shape = com
             return obj
 
+        if isinstance(geo, r3.LineCurve): # Must be before Curve
+           print("Line Curve")
+           print(dir(geo))
+           return
+
+        if isinstance(geo, r3.NurbsCurve): # Must be before Curve
+           print("NurbsCurve Object")
+           #print(dir(geo))
+           obj = doc.addObject("Part::Feature","NurbsCurve")
+           obj.Shape = self.create_curve(geo).toShape()
+           return obj
+
         if isinstance(geo, r3.ArcCurve):
-            print("Arc Curve Object")
-            print(dir(geo))
-            return
+           print("Arc Curve Object")
+           print(dir(geo))
+           return
         
         if isinstance(geo, r3.BezierCurve):
-            print("Bezier Curve Object")
-            print(dir(geo))
-            return
+           print("Bezier Curve Object")
+           print(dir(geo))
+           return
 
-        if isinstance(geo, r3.Bitmap):
-            print("Bitmap Object")
-            print(dir(geo))
-            return
+        if isinstance(geo, r3.PolylineCurve):
+           print("PolyLineCurve Object")
+           print(dir(geo))
+           return
 
-        if isinstance(geo, r3.Box):
-            print("Box Object")
-            print(dir(geo))
-            return
-
-        if isinstance(geo, r3.Circle):
-            print("Circle Object")
-            print(dir(geo))
-            return
-
-        if isinstance(geo, r3.Cone):
-            print("Cone Object")
-            print(dir(geo))
-            return
-
-        if isinstance(geo, r3.Curve):
-            import inspect
-            print("Curve Object")
-            print(dir(geo))
-            print(geo.CurvatureAt)
-            print(geo.PolyCurveParameter)
-            print(geo.SegmentCount)
-            print(geo.SegmentCurve)
-            print(geo.SegmentCurveParameter)
-            print(geo.SegmentIndex)
-            print(geo.ToNurbsCurve())
-            nc = geo.ToNurbsCurve()
-            print(nc)
-            print(dir(nc))
-            print(nc.Degree)
-            #cpc = nc.CreateControlPointCurve()
-            #print(cpc)
-            #print(inspect.getargspec(nc.CreateControlPointCurve))
-            print(dir(nc.CreateControlPointCurve))
-            return
-
-        if isinstance(geo, r3.Cylinder):
-            print("Cylinder Object")
-            print(dir(geo))
-            return
+        if isinstance(geo, r3.PolyCurve):
+           print("PolyCurve Object")
+           print(dir(geo))
+           return
 
         if isinstance(geo, r3.Ellipse):
-            print("Ellipse Object")
-            print(dir(geo))
-            return
+           print("Ellipse Object")
+           print(dir(geo))
+           return
+
+        if isinstance(geo, r3.Bitmap):
+           print("Bitmap Object")
+           print(dir(geo))
+           return
+
+        if isinstance(geo, r3.Box):
+           print("Box Object")
+           print(dir(geo))
+           return
+
+        if isinstance(geo, r3.Circle):
+           print("Circle Object")
+           print(dir(geo))
+           return
+
+        if isinstance(geo, r3.Cone):
+           print("Cone Object")
+           print(dir(geo))
+           return
+
+        if isinstance(geo, r3.Curve):
+           print('Curve object')
+           self.printCurveInfo(geo)
+           print(geo.ToNurbsCurve())
+           #nc = geo.ToNurbsCurve()
+           #print(nc)
+           #print(dir(nc))
+           #print(nc.Degree)
+           cpc = geo.CreateControlPointCurve()
+           print(dir(cpc))
+           #obj = doc.addObject("Part::Feature","Curve")
+           #obj.Shape = Part.makeself.create_curve(geo).toShape()
+           #print(inspect.getargspec(nc.CreateControlPointCurve))
+           #print(dir(nc.CreateControlPointCurve))
+           return
+
+        if isinstance(geo, r3.Cylinder):
+           print("Cylinder Object")
+           print(dir(geo))
+           return
 
         if isinstance(geo, r3.Extrusion):
-            print("Extrusion")
-            print('Is Cylinder : '+str(geo.IsCylinder()))
-            print(geo.NormalAt)
-            print(geo.PathStart)
-            print(geo.PathEnd)
-            print(geo.PathTangent)
-            print(geo.PointAt)
-            print(geo.GetPathPlane)
-            print('Profile Count : '+str(geo.ProfileCount))
-            for i in range(geo.ProfileCount) :
-                c = geo.Profile3d(i,0.0)
-                print(c)
-                print(c.IsCircle())
-                print(c.Dimension)
-                print(c.Radius)
-            print(geo.Profile3d)
-            print(dir(geo))
-            return
-
-        if isinstance(geo, r3.LineCurve):
-            print("Line Curve")
-            print(dir(geo))
-            return
+           print("Extrusion")
+           print('Is Cylinder : '+str(geo.IsCylinder()))
+           print(geo.NormalAt)
+           print(geo.PathStart)
+           print(geo.PathEnd)
+           print(geo.PathTangent)
+           print(geo.PointAt)
+           print(geo.GetPathPlane)
+           print('Profile Count : '+str(geo.ProfileCount))
+           for i in range(geo.ProfileCount) :
+               c = geo.Profile3d(i,0.0)
+               print(c)
+               print(c.IsCircle())
+               print(c.Dimension)
+               print(c.Radius)
+           print(geo.Profile3d)
+           print(dir(geo))
+           return
 
         if isinstance(geo, r3.Mesh):
-            print("Mesh Object")
-            return(self.create_mesh(doc, geo))
+           print("Mesh Object")
+           return(self.create_mesh(doc, geo))
 
-        if isinstance(geo, r3.NurbsCurve):
-            print("NurbsCurve Object")
-            #print(dir(geo))
-            obj = doc.addObject("Part::Feature","NurbsCurve")
-            obj.Shape = self.create_curve(geo).toShape()
-            return obj
-        
         if isinstance(geo, r3.NurbsSurface):
             print("NurbsSurface Object")
             print(dir(geo))
             return(self.create_surface(geo))
-
-        if isinstance(geo, r3.PolyCurve):
-            print("PolyCurve Object")
-            print(dir(geo))
-            return
 
         if isinstance(geo, r3.PointCloud):
             print("PointCloud Object")
@@ -206,6 +206,18 @@ class File3dm:
 
         print('Not yet handled')
         print(dir(geo))
+
+    def printCurveInfo(self, geo) :
+        print('Curve Info')
+        print(dir(geo))
+        #print('IsArc     : ',geo.isArc())
+        #print('IsCircle  : ',geo.isCircle())
+        #print('IsEllipse : ',geo.isEllipse())
+        #print(geo.CurvatureAt)
+        #print(geo.SegmentCount)
+        #print(geo.SegmentCurve)
+        #print(geo.SegmentCurveParameter)
+        #print(geo.SegmentIndex)
 
     def create_curve(self, edge):
         nc = edge.ToNurbsCurve()
