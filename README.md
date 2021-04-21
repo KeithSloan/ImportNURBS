@@ -10,7 +10,15 @@
   
 # Requirements 
 
-* rhino3dm - Open Python Rhino 3dm library - Which seems to require Python 3.7 
+* rhino3dm - Open Python Rhino 3dm library 
+
+You need to use the same version of Python that FreeCAD is using to
+install rhino3dm. You can find out the version FreeCAD is using by
+using
+ 
+    FreeCAD | About freecad | Libraries 
+or
+    Looking at the heading in FreeCAD python console   
   
 # Installation - Add on Manager
 
@@ -24,7 +32,7 @@
          
      - Select one the the directories listed
      
-       pip3 install rhino3dm -t [directory path]
+       python3 -m pip install rhino3dm -t [directory path]
      
      - restart FreeCAD
 
