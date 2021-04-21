@@ -12,9 +12,10 @@
 
 * rhino3dm - Open Python Rhino 3dm library 
 
-You need to use the same version of Python that FreeCAD is using to
-install rhino3dm. You can find out the version FreeCAD is using by
-using
+You need to use the same version and level of Python that FreeCAD is using to
+install rhino3dm. 
+
+You can find out the version FreeCAD is using by using
  
     FreeCAD | About freecad | Libraries 
 or
