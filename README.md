@@ -32,8 +32,10 @@ or
         - print(sys.path)
          
      - Select one the the directories listed
+
+       If FreeCAD is using Python 3.8
      
-       python3 -m pip install rhino3dm -t [directory path]
+       python3.8 -m pip install rhino3dm -t [directory path]
      
      - restart FreeCAD
 
