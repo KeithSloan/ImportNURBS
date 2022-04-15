@@ -148,21 +148,22 @@ class File3dm:
             "".format(obj_type, obj_name)
         )
 
-        self.log_l2(" type", type(geo))
-        self.log_l2("obj.Attributes:")
-        File3dm.print_class_attributes(obj.Attributes, self.log_l2)
-        self.log_l2("obj.Geometry:")
-        File3dm.print_class_attributes(obj.Geometry, self.log_l2)
+        # self.log_l2(" type", type(geo))
+        # self.log_l2("obj.Attributes:")
+        # File3dm.print_class_attributes(obj.Attributes, self.log_l2)
+        # self.log_l2("obj.Geometry:")
+        # File3dm.print_class_attributes(obj.Geometry, self.log_l2)
 
         # str(geo.ObjectType) == "ObjectType.Brep":
         if isinstance(geo, r3.Brep):
             self.log_l0("Brep object")
-            self.log_l1("is solid : {}".format(geo.IsSolid))
-            self.log_l1("is manifold : {}".format(geo.IsManifold))
-            self.log_l1("is surface : {}".format(geo.IsSurface))
-            self.log_l1("has {} faces".format(len(geo.Faces)))
-            self.log_l1("has {} surfaces".format(len(geo.Surfaces)))
-            self.log_l1("has {} edges".format(len(geo.Edges)))
+            self.log_l1("  is solid : {}".format(geo.IsSolid))
+            self.log_l1("  is manifold : {}".format(geo.IsManifold))
+            self.log_l1("  is surface : {}".format(geo.IsSurface))
+            self.log_l1("  has {} faces".format(len(geo.Faces)))
+            self.log_l1("  has {} surfaces".format(len(geo.Surfaces)))
+            self.log_l1("  has {} edges".format(len(geo.Edges)))
+
             shapes = []
             for i in range(len(geo.Faces)):
                 self.log_l1(geo.Faces[i])
