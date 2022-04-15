@@ -55,15 +55,28 @@ class File3dm:
 
     def log_l0(self, *args, **kwargs):
         if self.debug_level >= 0:
-            print(args, kwargs)
+            print(*args, *kwargs)
 
     def log_l1(self, *args, **kwargs):
         if self.debug_level >= 1:
-            print(args, kwargs)
+            print(*args, *kwargs)
 
     def log_l2(self, *args, **kwargs):
         if self.debug_level >= 2:
-            print(args, kwargs)
+            print(*args, *kwargs)
+
+    def print_class_attributes(self, obj, print_fn=print):
+        """Print a list of all class attributes and ther values."""
+        obj_attr_names = [a for a in dir(obj) if not a.startswith("__")]
+        attr_name_length_max = len(max(obj_attr_names, key=len))
+        for attr_name in obj_attr_names:
+            value = getattr(obj, attr_name)
+            if callable(value):
+                try:
+                    value = value()
+                except Exception as e:
+                    value = str(e)[:60] + " ..."
+            print_fn(" {:>" + attr_name_length_max + "} ".format(attr_name), value)
 
     def parse_objects(self, doc=None):
         if not doc:
@@ -75,7 +88,8 @@ class File3dm:
             first_split = obj_fullname.split(".")
             second_split = first_split[-1].split(" ")
             self.log_l0("-----------------\n" "{}".format(second_split[0]))
-            self.log_l2("obj", obj)
+            self.log_l0("obj.Attributes:")
+            self.print_class_attributes(obj.Attributes, self.log_l0)
             freecad_obj = self.import_geometry(doc, obj.Geometry)
             self.log_l2("freecad_obj", freecad_obj)
             if freecad_obj:
@@ -266,15 +280,7 @@ class File3dm:
                 obj.recompute()
             else:
                 self.log_l0(" !!! NOT IMPLEMENTED YET !!!")
-                geo_attr = [a for a in dir(geo) if not a.startswith("__")]
-                for attr_name in geo_attr:
-                    value = getattr(geo, attr_name)
-                    if callable(value):
-                        try:
-                            value = value()
-                        except Exception as e:
-                            value = str(e)[:60] + " ..."
-                    self.log_l2(" {:>45} ".format(attr_name), value)
+                self.print_class_attributes(geo, self.log_l2)
             return
 
         if isinstance(geo, r3.Mesh):
@@ -450,7 +456,7 @@ def process3DM(doc, filename):
         "Revision",
     ]
 
-    fi = File3dm(filename, debug_level=1)
+    fi = File3dm(filename, debug_level=0)
     fi.parse_objects(doc)
     FreeCADGui.SendMsgToActiveView("ViewFit")
 
