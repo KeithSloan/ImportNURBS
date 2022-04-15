@@ -57,13 +57,17 @@ class File3dm:
             doc = FreeCAD.newDocument("3dm import")
         part = doc.addObject("App::Part", "Part")
         for i in range(len(self.f3dm.Objects)):
-            obj_fullname = "{}".format(self.f3dm.Objects[i].Geometry)
+            obj = self.f3dm.Objects[i]
+            obj_fullname = "{}".format(obj.Geometry)
             first_split = obj_fullname.split(".")
             second_split = first_split[-1].split(" ")
-            print("-----------------\n{}".format(second_split[0]))
-            obj = self.import_geometry(doc, self.f3dm.Objects[i].Geometry)
-            if obj:
-                part.addObject(obj)
+            print("-----------------\n" "{}".format(second_split[0]))
+            print("obj", obj)
+            freecad_obj = self.import_geometry(doc, obj.Geometry)
+            print("freecad_obj", freecad_obj)
+            if freecad_obj:
+                part.addObject(freecad_obj)
+            print()
 
     def import_geometry(self, doc, geo):
         print("Geometry type")
@@ -219,7 +223,7 @@ class File3dm:
 
         if isinstance(geo, r3.Extrusion):
             print("Extrusion")
-            print(dir(geo))
+            # print(dir(geo))
             print(" Is Cylinder : " + str(geo.IsCylinder()))
             print(" NormalAt", geo.NormalAt)
             print(" PathStart", geo.PathStart)
@@ -229,7 +233,7 @@ class File3dm:
             print(" GetPathPlane", geo.GetPathPlane)
             print(" Profile Count : " + str(geo.ProfileCount))
             for i in range(geo.ProfileCount):
-                print("- {:<4}".format(i))
+                print(" - {:>4}".format(i))
                 c = geo.Profile3d(i, 0.0)
                 print("   ", c)
                 print("   IsCircle", c.IsCircle())
@@ -238,6 +242,7 @@ class File3dm:
                     print("   Radius", c.Radius)
             print(" Profile3d", geo.Profile3d)
             if geo.IsCylinder() is True:
+                print(" create cylinder")
                 height = geo.PathStart.Z - geo.PathEnd.Z
                 print("Height : ", height)
                 c = geo.Profile3d(0, 0.0)
@@ -247,7 +252,16 @@ class File3dm:
                 obj.Height = height
                 obj.Radius = radius
                 obj.recompute()
-            # print(dir(geo))
+            else:
+                print(" !!! NOT IMPLEMENTED YET !!!")
+                for attr_name in dir(geo):
+                    value = getattr(geo, attr_name)
+                    if callable(value):
+                        try:
+                            value = value()
+                        except Exception as e:
+                            value = e
+                    print(" {:>45} ".format(attr_name), value)
             return
 
         if isinstance(geo, r3.Mesh):
