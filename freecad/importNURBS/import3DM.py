@@ -49,8 +49,21 @@ def toFCangle(center, start):
 
 
 class File3dm:
-    def __init__(self, path):
+    def __init__(self, path, debug_level=1):
+        self.debug_level = debug_level
         self.f3dm = r3.File3dm.Read(path)
+
+    def log_l0(self, *args, **kwargs):
+        if self.debug_level >= 0:
+            print(args, kwargs)
+
+    def log_l1(self, *args, **kwargs):
+        if self.debug_level >= 1:
+            print(args, kwargs)
+
+    def log_l2(self, *args, **kwargs):
+        if self.debug_level >= 2:
+            print(args, kwargs)
 
     def parse_objects(self, doc=None):
         if not doc:
@@ -61,39 +74,38 @@ class File3dm:
             obj_fullname = "{}".format(obj.Geometry)
             first_split = obj_fullname.split(".")
             second_split = first_split[-1].split(" ")
-            print("-----------------\n" "{}".format(second_split[0]))
-            print("obj", obj)
+            self.log_l0("-----------------\n" "{}".format(second_split[0]))
+            self.log_l2("obj", obj)
             freecad_obj = self.import_geometry(doc, obj.Geometry)
-            print("freecad_obj", freecad_obj)
+            self.log_l2("freecad_obj", freecad_obj)
             if freecad_obj:
                 part.addObject(freecad_obj)
-            print()
+            self.log_l0()
 
     def import_geometry(self, doc, geo):
-        print("Geometry type")
-        print(type(geo))
+        self.log_l0("Geometry type", type(geo))
 
         if isinstance(geo, r3.Brep):  # str(geo.ObjectType) == "ObjectType.Brep":
-            print("Brep object")
-            print("is solid : {}".format(geo.IsSolid))
-            print("is manifold : {}".format(geo.IsManifold))
-            print("is surface : {}".format(geo.IsSurface))
-            print("has {} faces".format(len(geo.Faces)))
-            print("has {} surfaces".format(len(geo.Surfaces)))
-            print("has {} edges".format(len(geo.Edges)))
+            self.log_l0("Brep object")
+            self.log_l1("is solid : {}".format(geo.IsSolid))
+            self.log_l1("is manifold : {}".format(geo.IsManifold))
+            self.log_l1("is surface : {}".format(geo.IsSurface))
+            self.log_l1("has {} faces".format(len(geo.Faces)))
+            self.log_l1("has {} surfaces".format(len(geo.Surfaces)))
+            self.log_l1("has {} edges".format(len(geo.Edges)))
             shapes = []
             for i in range(len(geo.Faces)):
-                print(geo.Faces[i])
+                self.log_l1(geo.Faces[i])
                 s = self.create_surface(geo.Faces[i])
-                print(s)
+                self.log_l1(s)
                 shapes.append(s.toShape())
-                # print("Face {} has {} edges".format(i,len(geo.Faces[i].Edges)))
+                # log_l2"Face {} has {} edges".format(i,len(geo.Faces[i].Edges)))
             com = Part.Compound(shapes)
             obj = doc.addObject("Part::Feature", "Faces")
             obj.Shape = com
             # 	        	shapes = []
             # 			for i in range(len(geo.Edges)):
-            # 				#print(geo.Faces[i])
+            # 				#log_l2geo.Faces[i])
             # 				c = self.create_curve(geo.Edges[i])
             # 				shapes.append(c.toShape())
             # 			com = Part.Compound(shapes)
@@ -102,10 +114,10 @@ class File3dm:
             return obj
 
         if isinstance(geo, r3.LineCurve):  # Must be before Curve
-            print("Line Curve")
-            # print(dir(geo))
+            self.log_l0("Line Curve")
+            # log_l2(dir(geo))
             obj = doc.addObject("Part::Line", "Line Curve?")
-            # print(dir(obj))
+            # log_l2(dir(obj))
             obj.X1 = geo.PointAtStart.X
             obj.Y1 = geo.PointAtStart.Y
             obj.Z1 = geo.PointAtStart.Z
@@ -116,144 +128,144 @@ class File3dm:
             return
 
         if isinstance(geo, r3.NurbsCurve):  # Must be before Curve
-            print("NurbsCurve Object")
-            # print(dir(geo))
+            self.log_l0("NurbsCurve Object")
+            # log_l2(dir(geo))
             obj = doc.addObject("Part::Feature", "NurbsCurve")
             obj.Shape = self.create_curve(geo).toShape()
             return obj
 
         if isinstance(geo, r3.ArcCurve):
-            print("Arc Curve Object")
+            self.log_l0("Arc Curve Object")
             obj = doc.addObject("Part::Circle", "Arc")
-            # print(type(geo.Arc.Center))
+            # log_l2type(geo.Arc.Center))
             obj.Placement.Base = toFCvec(geo.Arc.Center)
             obj.Radius = geo.Radius
             obj.Angle0 = startAngle = toFCangle(geo.Arc.Center, geo.PointAtStart)
             obj.Angle1 = startAngle + geo.Arc.AngleDegrees
-            # print(dir(geo))
+            # log_l2(dir(geo))
             obj.recompute()
             return obj
 
         if isinstance(geo, r3.BezierCurve):
-            print("Bezier Curve Object")
-            print(dir(geo))
+            self.log_l0("Bezier Curve Object")
+            self.log_l1(dir(geo))
             obj = doc.addObject("Part::Feature", "Bezier")
             obj.Shape = self.create_curve(geo).toShape()
             obj.recompute()
             return
 
         if isinstance(geo, r3.PolylineCurve):
-            print("PolyLineCurve Object")
-            print("Polgon Line?")
-            # print(dir(geo))
-            print("Is Polyline : " + str(geo.IsPolyline()))
-            print("Point Count : " + str(geo.PointCount))
+            self.log_l0("PolyLineCurve Object")
+            self.log_l2("Polgon Line?")
+            # self.log_l2(dir(geo))
+            self.log_l2("Is Polyline : " + str(geo.IsPolyline()))
+            self.log_l2("Point Count : " + str(geo.PointCount))
             # pl = geo.ToPolyline()
-            # print(pl)
-            # print(dir(pl))
+            # self.log_l2(pl)
+            # self.log_l2(dir(pl))
             obj = doc.addObject("Part::Polygon", "PolyLine Curve?")
-            # print(dir(obj))
+            # self.log_l2(dir(obj))
             pList = []
             for i in range(geo.PointCount):
                 p = geo.Point(i)
-                # print(p.X)
-                # print(p.Y)
-                # print(p.Z)
+                # self.log_l2(p.X)
+                # self.log_l2(p.Y)
+                # self.log_l2(p.Z)
                 pList.append(FreeCAD.Vector(p.X, p.Y, p.Z))
-            # print(pList)
+            # self.log_l2(pList)
             # obj.Shape = Part.makePolygon(pList)
             obj.Nodes = pList
             obj.recompute()
             return
 
         if isinstance(geo, r3.PolyCurve):
-            print("PolyCurve Object")
+            self.log_l0("PolyCurve Object")
             # self.printCurveInfo(geo)
             obj = doc.addObject("Part::Feature", "PolyCurve")
             obj.Shape = self.create_curve(geo).toShape()
             obj.recompute()
-            # print(dir(geo))
+            # log_l2(dir(geo))
             return
 
         if isinstance(geo, r3.Ellipse):
-            print("Ellipse Object")
-            print(dir(geo))
+            self.log_l0("Ellipse Object")
+            self.log_l1(dir(geo))
             return
 
         if isinstance(geo, r3.Bitmap):
-            print("Bitmap Object")
-            print(dir(geo))
+            self.log_l0("Bitmap Object")
+            self.log_l1(dir(geo))
             return
 
         if isinstance(geo, r3.Box):
-            print("Box Object")
-            print(dir(geo))
+            self.log_l0("Box Object")
+            self.log_l1(dir(geo))
             return
 
         if isinstance(geo, r3.Circle):
-            print("Circle Object")
-            print(dir(geo))
+            self.log_l0("Circle Object")
+            self.log_l1(dir(geo))
             return
 
         if isinstance(geo, r3.Cone):
-            print("Cone Object")
-            print(dir(geo))
+            self.log_l0("Cone Object")
+            self.log_l1(dir(geo))
             return
 
         if isinstance(geo, r3.Curve):
-            print("Curve object")
+            self.log_l0("Curve object")
             self.printCurveInfo(geo)
-            print(geo.ToNurbsCurve())
+            self.log_l1(geo.ToNurbsCurve())
             # nc = geo.ToNurbsCurve()
-            # print(nc)
-            # print(dir(nc))
-            # print(nc.Degree)
+            # self.log_l1(nc)
+            # self.log_l1(dir(nc))
+            # self.log_l1(nc.Degree)
             cpc = geo.CreateControlPointCurve()
-            print(dir(cpc))
+            self.log_l1(dir(cpc))
             # obj = doc.addObject("Part::Feature","Curve")
             # obj.Shape = Part.makeself.create_curve(geo).toShape()
-            # print(inspect.getargspec(nc.CreateControlPointCurve))
-            # print(dir(nc.CreateControlPointCurve))
+            # self.log_l1(inspect.getargspec(nc.CreateControlPointCurve))
+            # self.log_l1(dir(nc.CreateControlPointCurve))
             return
 
         if isinstance(geo, r3.Cylinder):
-            print("Cylinder Object")
-            print(dir(geo))
+            self.log_l0("Cylinder Object")
+            self.log_l1(dir(geo))
             return
 
         if isinstance(geo, r3.Extrusion):
-            print("Extrusion")
-            # print(dir(geo))
-            print(" Is Cylinder : " + str(geo.IsCylinder()))
-            print(" NormalAt", geo.NormalAt)
-            print(" PathStart", geo.PathStart)
-            print(" PathEnd", geo.PathEnd)
-            print(" PathTangent", geo.PathTangent)
-            print(" PointAt", geo.PointAt)
-            print(" GetPathPlane", geo.GetPathPlane)
-            print(" Profile Count : " + str(geo.ProfileCount))
+            self.log_l0("Extrusion")
+            # self.log_l1(dir(geo))
+            self.log_l1(" Is Cylinder : " + str(geo.IsCylinder()))
+            self.log_l1(" NormalAt", geo.NormalAt)
+            self.log_l1(" PathStart", geo.PathStart)
+            self.log_l1(" PathEnd", geo.PathEnd)
+            self.log_l1(" PathTangent", geo.PathTangent)
+            self.log_l1(" PointAt", geo.PointAt)
+            self.log_l1(" GetPathPlane", geo.GetPathPlane)
+            self.log_l1(" Profile Count : " + str(geo.ProfileCount))
             for i in range(geo.ProfileCount):
-                print(" - {:>4}".format(i))
+                self.log_l1(" - {:>4}".format(i))
                 c = geo.Profile3d(i, 0.0)
-                print("   ", c)
-                print("   IsCircle", c.IsCircle())
-                print("   Dimension", c.Dimension)
+                self.log_l1("   ", c)
+                self.log_l1("   IsCircle", c.IsCircle())
+                self.log_l1("   Dimension", c.Dimension)
                 if hasattr(c, "Radius"):
-                    print("   Radius", c.Radius)
-            print(" Profile3d", geo.Profile3d)
+                    self.log_l1("   Radius", c.Radius)
+            self.log_l1(" Profile3d", geo.Profile3d)
             if geo.IsCylinder() is True:
-                print(" create cylinder")
+                self.log_l1(" create cylinder")
                 height = geo.PathStart.Z - geo.PathEnd.Z
-                print("Height : ", height)
+                self.log_l1("Height : ", height)
                 c = geo.Profile3d(0, 0.0)
                 radius = c.Radius
-                print("Radius : ", radius)
+                self.log_l1("Radius : ", radius)
                 obj = doc.addObject("Part::Cylinder", "Extruded Cylinder")
                 obj.Height = height
                 obj.Radius = radius
                 obj.recompute()
             else:
-                print(" !!! NOT IMPLEMENTED YET !!!")
+                self.log_l0(" !!! NOT IMPLEMENTED YET !!!")
                 geo_attr = [a for a in dir(geo) if not a.startswith("__")]
                 for attr_name in geo_attr:
                     value = getattr(geo, attr_name)
@@ -262,61 +274,61 @@ class File3dm:
                             value = value()
                         except Exception as e:
                             value = str(e)[:60] + " ..."
-                    print(" {:>45} ".format(attr_name), value)
+                    self.log_l2(" {:>45} ".format(attr_name), value)
             return
 
         if isinstance(geo, r3.Mesh):
-            print("Mesh Object")
+            self.log_l0("Mesh Object")
             return self.create_mesh(doc, geo)
 
         if isinstance(geo, r3.NurbsSurface):
-            print("NurbsSurface Object")
-            print(dir(geo))
+            self.log_l0("NurbsSurface Object")
+            log_l2(dir(geo))
             return self.create_surface(geo)
 
         if isinstance(geo, r3.PointCloud):
-            print("PointCloud Object")
-            print(dir(geo))
+            self.log_l0("PointCloud Object")
+            log_l1(dir(geo))
             return
 
         if isinstance(geo, r3.Surface):
-            print("Surface Object")
-            print(geo.IsCylinder)
-            print(geo.IsSolid)
-            print(dir(geo))
+            self.log_l0("Surface Object")
+            self.log_l1(geo.IsCylinder)
+            self.log_l1(geo.IsSolid)
+            self.log_l1(dir(geo))
             return
 
-        print("Not yet handled")
-        print(dir(geo))
+        self.log_l0("Not yet handled")
+        self.log_l1(dir(geo))
 
     def printCurveInfo(self, geo):
-        print("Curve Info")
-        print(dir(geo))
-        print("IsArc     : ", geo.IsArc())
-        print("IsCircle  : ", geo.IsCircle())
-        print("IsEllipse : ", geo.IsEllipse())
-        print(geo.CurvatureAt)
-        print(dir(geo.CurvatureAt))
-        print(geo.SegmentCount)
-        print(geo.SegmentCurve)
-        print(dir(geo.SegmentCurve))
-        print(geo.SegmentCurveParameter)
-        print(dir(geo.SegmentCurveParameter))
-        print(geo.SegmentIndex)
-        print(dir(geo.SegmentIndex))
+        self.log_l1("Curve Info")
+        self.log_l1(dir(geo))
+        self.log_l1("IsArc     : ", geo.IsArc())
+        self.log_l1("IsCircle  : ", geo.IsCircle())
+        self.log_l1("IsEllipse : ", geo.IsEllipse())
+        self.log_l1(geo.CurvatureAt)
+        self.log_l1(dir(geo.CurvatureAt))
+        self.log_l1(geo.SegmentCount)
+        self.log_l1(geo.SegmentCurve)
+        self.log_l1(dir(geo.SegmentCurve))
+        self.log_l1(geo.SegmentCurveParameter)
+        self.log_l1(dir(geo.SegmentCurveParameter))
+        self.log_l1(geo.SegmentIndex)
+        self.log_l1(dir(geo.SegmentIndex))
         # cpc = geo.CreateControlPointCurve()
-        # print(dir(cpc))
+        # self.log_l2(dir(cpc))
         nc = geo.ToNurbsCurve()
-        print(dir(nc))
+        self.log_l1(dir(nc))
 
     def create_curve(self, edge):
         nc = edge.ToNurbsCurve()
-        # print("{} x {}".format(nu.Degree(0), nu.Degree(1)))
+        # log_l1("{} x {}".format(nu.Degree(0), nu.Degree(1)))
         pts = []
         weights = []
         for u in range(len(nc.Points)):
             p = nc.Points[u]
-            # print(FreeCAD.Vector(p.X,p.Y,p.Z))
+            # self.log_l2(FreeCAD.Vector(p.X,p.Y,p.Z))
             pts.append(FreeCAD.Vector(p.X / p.W, p.Y / p.W, p.Z / p.W))
             weights.append(p.W)
         ku, mu = self.getFCKnots(nc.Knots)
@@ -329,35 +341,35 @@ class File3dm:
 
     def create_surface(self, surf):
         nu = surf.ToNurbsSurface()
-        print("{} x {}".format(nu.Degree(0), nu.Degree(1)))
+        self.log_l0("{} x {}".format(nu.Degree(0), nu.Degree(1)))
         pts = []
         weights = []
-        print("Control Points")
-        print("CountU : " + str(nu.Points.CountU))
-        print("CountV : " + str(nu.Points.CountV))
+        self.log_l0("Control Points")
+        self.log_l1("CountU : " + str(nu.Points.CountU))
+        self.log_l1("CountV : " + str(nu.Points.CountV))
         for u in range(nu.Points.CountU):
             row = []
             wrow = []
             for v in range(nu.Points.CountV):
                 p = nu.Points[u, v]
-                print(FreeCAD.Vector(p.X, p.Y, p.Z))
+                self.log_l2(FreeCAD.Vector(p.X, p.Y, p.Z))
                 row.append(FreeCAD.Vector(p.X / p.W, p.Y / p.W, p.Z / p.W))
                 wrow.append(p.W)
             pts.append(row)
             weights.append(wrow)
-        print("Knots")
+        self.log_l1("Knots")
         ku, mu = self.getFCKnots(nu.KnotsU)
         kv, mv = self.getFCKnots(nu.KnotsV)
         uperiodic = False  # mu[0] <= nu.Degree(0)
         vperiodic = False  # mv[0] <= nu.Degree(1)
-        print(list(nu.KnotsU))
-        print("ku mu")
-        print(ku, mu)
-        print("kv mv")
-        print(kv, mv)
-        print("Flat knots")
+        self.log_l1(list(nu.KnotsU))
+        self.log_l1("ku mu")
+        self.log_l1(ku, mu)
+        self.log_l1("kv mv")
+        self.log_l1(kv, mv)
+        self.log_l1("Flat knots")
         vflatknots = list(nu.KnotsV)
-        print("{}\n{}".format(vflatknots, vflatknots))
+        self.log_l1("{}\n{}".format(vflatknots, vflatknots))
         bs = Part.BSplineSurface()
         bs.buildFromPolesMultsKnots(
             pts,
@@ -395,25 +407,25 @@ class File3dm:
         fcMesh = Mesh.Mesh()
         obj = doc.addObject("Mesh::Feature")
         obj.Mesh = Mesh.Mesh()
-        print("Quad Count : " + str(r3mesh.Faces.QuadCount))
-        print("Triangle Count : " + str(r3mesh.Faces.TriangleCount))
+        self.log_l1("Quad Count : " + str(r3mesh.Faces.QuadCount))
+        self.log_l1("Triangle Count : " + str(r3mesh.Faces.TriangleCount))
         # FreeCAD only supports Triangles
-        print(r3mesh.Faces.ConvertQuadsToTriangles())
-        print(len(r3mesh.Faces))
-        print("Count : " + str(r3mesh.Faces.Count))
-        print("Quad Count : " + str(r3mesh.Faces.QuadCount))
-        print("Vertices Count : " + str(len(r3mesh.Vertices)))
-        # print(type(r3mesh.Faces))
+        self.log_l1(r3mesh.Faces.ConvertQuadsToTriangles())
+        self.log_l1(len(r3mesh.Faces))
+        self.log_l1("Count : " + str(r3mesh.Faces.Count))
+        self.log_l1("Quad Count : " + str(r3mesh.Faces.QuadCount))
+        self.log_l1("Vertices Count : " + str(len(r3mesh.Vertices)))
+        # log_l1(type(r3mesh.Faces))
         for m in range(r3mesh.Faces.TriangleCount):
-            # print('Face')
+            # log_l1('Face')
             mf = r3mesh.Faces[m]
-            # print(type(mf))
-            # print(dir(mf))
+            # log_l1(type(mf))
+            # log_l1(dir(mf))
             fval = ()
             # 3dm files always have 4 vertex values even for triangles
             for r in range(0, 3):
                 f = mf[r]
-                # print('X : '+str(r3mesh.Vertices[f].X)+ \
+                # log_l1('X : '+str(r3mesh.Vertices[f].X)+ \
                 #     ' Y : '+str(r3mesh.Vertices[f].Y)+ \
                 #     ' Z : '+str(r3mesh.Vertices[f].Z))
                 fval = fval + (
@@ -438,7 +450,7 @@ def process3DM(doc, filename):
         "Revision",
     ]
 
-    fi = File3dm(filename)
+    fi = File3dm(filename, debug_level=1)
     fi.parse_objects(doc)
     FreeCADGui.SendMsgToActiveView("ViewFit")
 
