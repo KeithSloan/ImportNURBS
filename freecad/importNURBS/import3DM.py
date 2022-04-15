@@ -19,8 +19,7 @@ if open.__module__ == "__builtin__":
 
 
 def open(filename):
-    "called when freecad opens a file."
-    global doc
+    """Import as new file."""
     docname = os.path.splitext(os.path.basename(filename))[0]
     doc = FreeCAD.newDocument(docname)
     if filename.lower().endswith(".3dm"):
@@ -29,9 +28,8 @@ def open(filename):
 
 
 def insert(filename, docname):
-    "called when freecad imports a file"
-    global doc
-    groupname = os.path.splitext(os.path.basename(filename))[0]
+    """Insert import into open document."""
+    # groupname = os.path.splitext(os.path.basename(filename))[0]
     try:
         doc = FreeCAD.getDocument(docname)
     except NameError:
@@ -41,34 +39,46 @@ def insert(filename, docname):
 
 
 def toFCvec(r3Dpnt):
+    """Convert to FreeCAD Vector."""
     return FreeCAD.Vector(r3Dpnt.X, r3Dpnt.Y, r3Dpnt.Z)
 
 
 def toFCangle(center, start):
+    """Convert to FreeCAD Angle."""
     return math.atan((start.Y - center.Y) / (start.X - center.Y)) * math.pi / 180
 
 
 class File3dm:
+    """Main 3dm to FreeCAD converter."""
+
     def __init__(self, path, debug_level=1):
+        """Init."""
         self.debug_level = debug_level
+        self.path = path
+        self.filename = os.path.basename(path)
         self.f3dm = r3.File3dm.Read(path)
 
     def log_l0(self, *args, **kwargs):
+        """Log with level0."""
         if self.debug_level >= 0:
             print(*args, *kwargs)
 
     def log_l1(self, *args, **kwargs):
+        """Log with level1."""
         if self.debug_level >= 1:
             print(*args, *kwargs)
 
     def log_l2(self, *args, **kwargs):
+        """Log with level2."""
         if self.debug_level >= 2:
             print(*args, *kwargs)
 
-    def print_class_attributes(self, obj, print_fn=print):
+    @staticmethod
+    def print_class_attributes(obj, print_fn=print):
         """Print a list of all class attributes and ther values."""
         obj_attr_names = [a for a in dir(obj) if not a.startswith("__")]
         attr_name_length_max = len(max(obj_attr_names, key=len))
+        attr_name_format = " {:>" + str(attr_name_length_max) + "} "
         for attr_name in obj_attr_names:
             value = getattr(obj, attr_name)
             if callable(value):
@@ -76,30 +86,76 @@ class File3dm:
                     value = value()
                 except Exception as e:
                     value = str(e)[:60] + " ..."
-            print_fn(" {:>" + attr_name_length_max + "} ".format(attr_name), value)
+            print_fn(attr_name_format.format(attr_name), value)
 
+    @staticmethod
+    def get_obj_name(obj):
+        """Get object name as string."""
+        if obj and hasattr(obj, "Attributes"):
+            obj_name = obj.Attributes.Name
+        if not obj_name:
+            obj_name = obj.Geometry.ObjectType.name
+        return obj_name
+
+    def print_curve_info(self, geo):
+        """Print some Cuve Info."""
+        self.log_l1("Curve Info")
+        self.log_l1(dir(geo))
+        self.log_l1("IsArc     : ", geo.IsArc())
+        self.log_l1("IsCircle  : ", geo.IsCircle())
+        self.log_l1("IsEllipse : ", geo.IsEllipse())
+        self.log_l1(geo.CurvatureAt)
+        self.log_l1(dir(geo.CurvatureAt))
+        self.log_l1(geo.SegmentCount)
+        self.log_l1(geo.SegmentCurve)
+        self.log_l1(dir(geo.SegmentCurve))
+        self.log_l1(geo.SegmentCurveParameter)
+        self.log_l1(dir(geo.SegmentCurveParameter))
+        self.log_l1(geo.SegmentIndex)
+        self.log_l1(dir(geo.SegmentIndex))
+        # cpc = geo.CreateControlPointCurve()
+        # self.log_l2(dir(cpc))
+        nurbs_curve = geo.ToNurbsCurve()
+        self.log_l1(dir(nurbs_curve))
+
+    # main import functions
     def parse_objects(self, doc=None):
+        """Parse & load all Objects from self.f3dm."""
         if not doc:
             doc = FreeCAD.newDocument("3dm import")
-        part = doc.addObject("App::Part", "Part")
+        part = doc.addObject("App::Part", name=self.filename)
+        # change to *Tree-Based* Group-Import or something similar. ?!?
+        # https://mcneel.github.io/rhino3dm/python/api/File3dm.html
+        # use f3dm.Groups?!
         for i in range(len(self.f3dm.Objects)):
             obj = self.f3dm.Objects[i]
-            obj_fullname = "{}".format(obj.Geometry)
-            first_split = obj_fullname.split(".")
-            second_split = first_split[-1].split(" ")
-            self.log_l0("-----------------\n" "{}".format(second_split[0]))
-            self.log_l0("obj.Attributes:")
-            self.print_class_attributes(obj.Attributes, self.log_l0)
-            freecad_obj = self.import_geometry(doc, obj.Geometry)
+            freecad_obj = self.import_object(doc, obj)
             self.log_l2("freecad_obj", freecad_obj)
             if freecad_obj:
                 part.addObject(freecad_obj)
             self.log_l0()
 
-    def import_geometry(self, doc, geo):
-        self.log_l0("Geometry type", type(geo))
+    def import_object(self, doc, obj):
+        """Import geometry and convert to FreeCAD object"""
+        geo = obj.Geometry
+        obj_name = File3dm.get_obj_name(obj)
+        obj_type = obj.Geometry.ObjectType.name
+        self.log_l0(
+            "-----------------\n"
+            "import_object: \n"
+            " type: '{}' \n"
+            " name: '{}' \n"
+            "".format(obj_type, obj_name)
+        )
 
-        if isinstance(geo, r3.Brep):  # str(geo.ObjectType) == "ObjectType.Brep":
+        self.log_l2(" type", type(geo))
+        self.log_l2("obj.Attributes:")
+        File3dm.print_class_attributes(obj.Attributes, self.log_l2)
+        self.log_l2("obj.Geometry:")
+        File3dm.print_class_attributes(obj.Geometry, self.log_l2)
+
+        # str(geo.ObjectType) == "ObjectType.Brep":
+        if isinstance(geo, r3.Brep):
             self.log_l0("Brep object")
             self.log_l1("is solid : {}".format(geo.IsSolid))
             self.log_l1("is manifold : {}".format(geo.IsManifold))
@@ -110,12 +166,13 @@ class File3dm:
             shapes = []
             for i in range(len(geo.Faces)):
                 self.log_l1(geo.Faces[i])
-                s = self.create_surface(geo.Faces[i])
-                self.log_l1(s)
-                shapes.append(s.toShape())
-                # log_l2"Face {} has {} edges".format(i,len(geo.Faces[i].Edges)))
+                surface = self.create_surface(geo.Faces[i])
+                self.log_l1(surface)
+                shapes.append(surface.toShape())
+                # self.log_l2("Face {} has {} edges".format(i, len(geo.Faces[i].Edges)))
             com = Part.Compound(shapes)
-            obj = doc.addObject("Part::Feature", "Faces")
+            obj = doc.addObject("Part::Feature", name=obj_name)
+            obj.Label2 = "{} Faces".format(obj_type)
             obj.Shape = com
             # 	        	shapes = []
             # 			for i in range(len(geo.Edges)):
@@ -194,7 +251,7 @@ class File3dm:
 
         if isinstance(geo, r3.PolyCurve):
             self.log_l0("PolyCurve Object")
-            # self.printCurveInfo(geo)
+            # self.print_curve_info(geo)
             obj = doc.addObject("Part::Feature", "PolyCurve")
             obj.Shape = self.create_curve(geo).toShape()
             obj.recompute()
@@ -228,7 +285,7 @@ class File3dm:
 
         if isinstance(geo, r3.Curve):
             self.log_l0("Curve object")
-            self.printCurveInfo(geo)
+            self.print_curve_info(geo)
             self.log_l1(geo.ToNurbsCurve())
             # nc = geo.ToNurbsCurve()
             # self.log_l1(nc)
@@ -280,7 +337,7 @@ class File3dm:
                 obj.recompute()
             else:
                 self.log_l0(" !!! NOT IMPLEMENTED YET !!!")
-                self.print_class_attributes(geo, self.log_l2)
+                File3dm.print_class_attributes(geo, self.log_l2)
             return
 
         if isinstance(geo, r3.Mesh):
@@ -307,26 +364,6 @@ class File3dm:
         self.log_l0("Not yet handled")
         self.log_l1(dir(geo))
 
-    def printCurveInfo(self, geo):
-        self.log_l1("Curve Info")
-        self.log_l1(dir(geo))
-        self.log_l1("IsArc     : ", geo.IsArc())
-        self.log_l1("IsCircle  : ", geo.IsCircle())
-        self.log_l1("IsEllipse : ", geo.IsEllipse())
-        self.log_l1(geo.CurvatureAt)
-        self.log_l1(dir(geo.CurvatureAt))
-        self.log_l1(geo.SegmentCount)
-        self.log_l1(geo.SegmentCurve)
-        self.log_l1(dir(geo.SegmentCurve))
-        self.log_l1(geo.SegmentCurveParameter)
-        self.log_l1(dir(geo.SegmentCurveParameter))
-        self.log_l1(geo.SegmentIndex)
-        self.log_l1(dir(geo.SegmentIndex))
-        # cpc = geo.CreateControlPointCurve()
-        # self.log_l2(dir(cpc))
-        nc = geo.ToNurbsCurve()
-        self.log_l1(dir(nc))
-
     def create_curve(self, edge):
         nc = edge.ToNurbsCurve()
         # log_l1("{} x {}".format(nu.Degree(0), nu.Degree(1)))
@@ -347,12 +384,15 @@ class File3dm:
 
     def create_surface(self, surf):
         nu = surf.ToNurbsSurface()
-        self.log_l0("{} x {}".format(nu.Degree(0), nu.Degree(1)))
         pts = []
         weights = []
-        self.log_l0("Control Points")
-        self.log_l1("CountU : " + str(nu.Points.CountU))
-        self.log_l1("CountV : " + str(nu.Points.CountV))
+        self.log_l1("Degrees: {} x {}".format(nu.Degree(0), nu.Degree(1)))
+        self.log_l1(
+            "Control Points"
+            " CountU : {}"
+            " CountV : {}"
+            "".format(nu.Points.CountU, nu.Points.CountV)
+        )
         for u in range(nu.Points.CountU):
             row = []
             wrow = []
