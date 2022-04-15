@@ -220,32 +220,33 @@ class File3dm:
         if isinstance(geo, r3.Extrusion):
             print("Extrusion")
             print(dir(geo))
-            print("Is Cylinder : " + str(geo.IsCylinder()))
-            print(geo.NormalAt)
-            print(geo.PathStart)
-            print(geo.PathEnd)
-            print(geo.PathTangent)
-            print(geo.PointAt)
-            print(geo.GetPathPlane)
-            print("Profile Count : " + str(geo.ProfileCount))
+            print(" Is Cylinder : " + str(geo.IsCylinder()))
+            print(" NormalAt", geo.NormalAt)
+            print(" PathStart", geo.PathStart)
+            print(" PathEnd", geo.PathEnd)
+            print(" PathTangent", geo.PathTangent)
+            print(" PointAt", geo.PointAt)
+            print(" GetPathPlane", geo.GetPathPlane)
+            print(" Profile Count : " + str(geo.ProfileCount))
             for i in range(geo.ProfileCount):
-                print(i)
+                print("- {:<4}".format(i))
                 c = geo.Profile3d(i, 0.0)
-                print(c)
-                print(c.IsCircle())
-                print(c.Dimension)
-                print(c.Radius)
-            print(geo.Profile3d)
-            if geo.IsCylinder() == True:
+                print("   ", c)
+                print("   IsCircle", c.IsCircle())
+                print("   Dimension", c.Dimension)
+                if hasattr(c, "Radius"):
+                    print("   Radius", c.Radius)
+            print(" Profile3d", geo.Profile3d)
+            if geo.IsCylinder() is True:
                 height = geo.PathStart.Z - geo.PathEnd.Z
-                print("Height : " + str(height))
+                print("Height : ", height)
                 c = geo.Profile3d(0, 0.0)
                 radius = c.Radius
-                print("Radius : " + str(radius))
-            obj = doc.addObject("Part::Cylinder", "Extruded Cylinder")
-            obj.Height = height
-            obj.Radius = radius
-            obj.recompute()
+                print("Radius : ", radius)
+                obj = doc.addObject("Part::Cylinder", "Extruded Cylinder")
+                obj.Height = height
+                obj.Radius = radius
+                obj.recompute()
             # print(dir(geo))
             return
 
