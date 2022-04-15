@@ -254,13 +254,14 @@ class File3dm:
                 obj.recompute()
             else:
                 print(" !!! NOT IMPLEMENTED YET !!!")
-                for attr_name in dir(geo):
+                geo_attr = [a for a in dir(geo) if not a.startswith("__")]
+                for attr_name in geo_attr:
                     value = getattr(geo, attr_name)
                     if callable(value):
                         try:
                             value = value()
                         except Exception as e:
-                            value = e
+                            value = str(e)[:60] + " ..."
                     print(" {:>45} ".format(attr_name), value)
             return
 
