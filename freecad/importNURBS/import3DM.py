@@ -1,3 +1,32 @@
+# **************************************************************************
+# *                                                                        *
+# *   Copyright (c) 2020 Keith Sloan <keith@sloan-home.co.uk>              *
+# *                                                                        *
+# *   This program is free software; you can redistribute it and/or modify *
+# *   it under the terms of the GNU Lesser General Public License (LGPL)   *
+# *   as published by the Free Software Foundation; either version 2 of    *
+# *   the License, or (at your option) any later version.                  *
+# *   for detail see the LICENCE text file.                                *
+# *                                                                        *
+# *   This program is distributed in the hope that it will be useful,      *
+# *   but WITHOUT ANY WARRANTY; without even the implied warranty of       *
+# *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        *
+# *   GNU Library General Public License for more details.                 *
+# *                                                                        *
+# *   You should have received a copy of the GNU Library General Public    *
+# *   License along with this program; if not, write to the Free Software  *
+# *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 *
+# *   USA                                                                  *
+# *                                                                        *
+# *   Acknowledgements :                                                   *
+# *                                                                        *
+# *                                                                        *
+# **************************************************************************
+
+
+
+
+
 import FreeCAD 
 import os, io, sys
 import FreeCADGui 
@@ -225,10 +254,30 @@ class File3dm:
            for i in range(geo.ProfileCount) :
                print(i)
                c = geo.Profile3d(i,0.0)
+               print(f'Object type : {c.ObjectType}')
                print(c)
-               print(c.IsCircle())
-               print(c.Dimension)
-               print(c.Radius)
+               print(c.ObjectType)
+               if isinstance(c, r3.Curve):
+                  self.printCurveInfo(c)
+                  print('Not yet Handled')
+                  l = c.
+               else :
+                  print(dir(c))
+                  if c.IsArc == True :
+                     print('Arc')
+                     print('Not yet Handled')
+                  elif c.IsCircle == True :
+                     print('Circle')
+                     print(c.Radius)
+                     print('Not yet Handled')
+                  elif c.IsEllipse == True :
+                     print('Ellipse')
+                     print('Not yet Handled')
+                  elif c.IsPolyline == True :
+                     print('Polyline')
+                     print('Not yet Handled')
+             
+             
            print(geo.Profile3d)
            if geo.IsCylinder() == True :
               height = geo.PathStart.Z - geo.PathEnd.Z
@@ -236,10 +285,10 @@ class File3dm:
               c = geo.Profile3d(0,0.0)
               radius = c.Radius
               print('Radius : '+str(radius))
-           obj = doc.addObject("Part::Cylinder","Extruded Cylinder")
-           obj.Height = height
-           obj.Radius = radius
-           obj.recompute()
+              obj = doc.addObject("Part::Cylinder","Extruded Cylinder")
+              obj.Height = height
+              obj.Radius = radius
+              obj.recompute()
            #print(dir(geo))
            return
 
@@ -275,13 +324,14 @@ class File3dm:
         print('IsEllipse : ',geo.IsEllipse())
         print(geo.CurvatureAt)
         print(dir(geo.CurvatureAt))
-        print(geo.SegmentCount)
-        print(geo.SegmentCurve)
-        print(dir(geo.SegmentCurve))
-        print(geo.SegmentCurveParameter)
-        print(dir(geo.SegmentCurveParameter))
-        print(geo.SegmentIndex)
-        print(dir(geo.SegmentIndex))
+        if hasattr(geo,'SegmentCount') :
+           print(geo.SegmentCount)
+           print(geo.SegmentCurve)
+           print(dir(geo.SegmentCurve))
+           print(geo.SegmentCurveParameter)
+           print(dir(geo.SegmentCurveParameter))
+           print(geo.SegmentIndex)
+           print(dir(geo.SegmentIndex))
         #cpc = geo.CreateControlPointCurve()
         #print(dir(cpc))
         nc = geo.ToNurbsCurve()
