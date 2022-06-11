@@ -247,6 +247,9 @@ class File3dm:
            print(geo.PointAt)
            print(geo.GetPathPlane)
            print('Profile Count : '+str(geo.ProfileCount))
+           # Create Part ToShape from profile
+           # Create new Shape from Extrude of ToShape
+           # Create Part::PythonFeature & Return
            for i in range(geo.ProfileCount) :
                print(i)
                c = geo.Profile3d(i,0.0)
@@ -255,6 +258,7 @@ class File3dm:
                print(c.ObjectType)
                if isinstance(c, r3.Curve):
                   self.printCurveInfo(c)
+               # Need to create FreeCAD TopoShape depending on type
                print('Tests')
                if c.IsArc() == True :
                   print('Arc')
@@ -267,6 +271,7 @@ class File3dm:
                   print('Ellipse')
                   print('Not yet Handled')
                elif c.IsPolyline() == True :
+                  # Call ToLine and create FreeCAD TopoShape from Line
                   print('Polyline')
                   print('Not yet Handled')
              
