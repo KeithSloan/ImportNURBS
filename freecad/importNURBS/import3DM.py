@@ -23,10 +23,6 @@
 # *                                                                        *
 # **************************************************************************
 
-
-
-
-
 import FreeCAD 
 import os, io, sys
 import FreeCADGui 
@@ -259,23 +255,20 @@ class File3dm:
                print(c.ObjectType)
                if isinstance(c, r3.Curve):
                   self.printCurveInfo(c)
+               print('Tests')
+               if c.IsArc() == True :
+                  print('Arc')
                   print('Not yet Handled')
-                  l = c.
-               else :
-                  print(dir(c))
-                  if c.IsArc == True :
-                     print('Arc')
-                     print('Not yet Handled')
-                  elif c.IsCircle == True :
-                     print('Circle')
-                     print(c.Radius)
-                     print('Not yet Handled')
-                  elif c.IsEllipse == True :
-                     print('Ellipse')
-                     print('Not yet Handled')
-                  elif c.IsPolyline == True :
-                     print('Polyline')
-                     print('Not yet Handled')
+               elif c.IsCircle() == True :
+                  print('Circle')
+                  print(c.Radius)
+                  print('Not yet Handled')
+               elif c.IsEllipse() == True :
+                  print('Ellipse')
+                  print('Not yet Handled')
+               elif c.IsPolyline() == True :
+                  print('Polyline')
+                  print('Not yet Handled')
              
              
            print(geo.Profile3d)
@@ -322,6 +315,7 @@ class File3dm:
         print('IsArc     : ',geo.IsArc())
         print('IsCircle  : ',geo.IsCircle())
         print('IsEllipse : ',geo.IsEllipse())
+        print('IsPolyline : ',geo.IsPolyline())
         print(geo.CurvatureAt)
         print(dir(geo.CurvatureAt))
         if hasattr(geo,'SegmentCount') :
