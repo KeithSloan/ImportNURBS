@@ -1,0 +1,2 @@
+workbenches=Part
+pylibs=rhino3dm

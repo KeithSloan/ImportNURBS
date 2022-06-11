@@ -1,4 +1,29 @@
-import FreeCAD
+# **************************************************************************
+# *                                                                        *
+# *   Copyright (c) 2020 Keith Sloan <keith@sloan-home.co.uk>              *
+# *                                                                        *
+# *   This program is free software; you can redistribute it and/or modify *
+# *   it under the terms of the GNU Lesser General Public License (LGPL)   *
+# *   as published by the Free Software Foundation; either version 2 of    *
+# *   the License, or (at your option) any later version.                  *
+# *   for detail see the LICENCE text file.                                *
+# *                                                                        *
+# *   This program is distributed in the hope that it will be useful,      *
+# *   but WITHOUT ANY WARRANTY; without even the implied warranty of       *
+# *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the        *
+# *   GNU Library General Public License for more details.                 *
+# *                                                                        *
+# *   You should have received a copy of the GNU Library General Public    *
+# *   License along with this program; if not, write to the Free Software  *
+# *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 *
+# *   USA                                                                  *
+# *                                                                        *
+# *   Acknowledgements :                                                   *
+# *                                                                        *
+# *                                                                        *
+# **************************************************************************
+
+import FreeCAD 
 import os, io, sys
 import FreeCADGui
 import Part, Draft, math
@@ -218,36 +243,53 @@ class File3dm:
             return
 
         if isinstance(geo, r3.Extrusion):
-            print("Extrusion")
-            print(dir(geo))
-            print("Is Cylinder : " + str(geo.IsCylinder()))
-            print(geo.NormalAt)
-            print(geo.PathStart)
-            print(geo.PathEnd)
-            print(geo.PathTangent)
-            print(geo.PointAt)
-            print(geo.GetPathPlane)
-            print("Profile Count : " + str(geo.ProfileCount))
-            for i in range(geo.ProfileCount):
-                print(i)
-                c = geo.Profile3d(i, 0.0)
-                print(c)
-                print(c.IsCircle())
-                print(c.Dimension)
-                print(c.Radius)
-            print(geo.Profile3d)
-            if geo.IsCylinder() == True:
-                height = geo.PathStart.Z - geo.PathEnd.Z
-                print("Height : " + str(height))
-                c = geo.Profile3d(0, 0.0)
-                radius = c.Radius
-                print("Radius : " + str(radius))
-            obj = doc.addObject("Part::Cylinder", "Extruded Cylinder")
-            obj.Height = height
-            obj.Radius = radius
-            obj.recompute()
-            # print(dir(geo))
-            return
+           print("Extrusion")
+           print(dir(geo))
+           print('Is Cylinder : '+str(geo.IsCylinder()))
+           print(geo.NormalAt)
+           print(geo.PathStart)
+           print(geo.PathEnd)
+           print(geo.PathTangent)
+           print(geo.PointAt)
+           print(geo.GetPathPlane)
+           print('Profile Count : '+str(geo.ProfileCount))
+           for i in range(geo.ProfileCount) :
+               print(i)
+               c = geo.Profile3d(i,0.0)
+               print(f'Object type : {c.ObjectType}')
+               print(c)
+               print(c.ObjectType)
+               if isinstance(c, r3.Curve):
+                  self.printCurveInfo(c)
+               print('Tests')
+               if c.IsArc() == True :
+                  print('Arc')
+                  print('Not yet Handled')
+               elif c.IsCircle() == True :
+                  print('Circle')
+                  print(c.Radius)
+                  print('Not yet Handled')
+               elif c.IsEllipse() == True :
+                  print('Ellipse')
+                  print('Not yet Handled')
+               elif c.IsPolyline() == True :
+                  print('Polyline')
+                  print('Not yet Handled')
+             
+             
+           print(geo.Profile3d)
+           if geo.IsCylinder() == True :
+              height = geo.PathStart.Z - geo.PathEnd.Z
+              print('Height : '+str(height))
+              c = geo.Profile3d(0,0.0)
+              radius = c.Radius
+              print('Radius : '+str(radius))
+              obj = doc.addObject("Part::Cylinder","Extruded Cylinder")
+              obj.Height = height
+              obj.Radius = radius
+              obj.recompute()
+           #print(dir(geo))
+           return
 
         if isinstance(geo, r3.Mesh):
             print("Mesh Object")
@@ -276,20 +318,22 @@ class File3dm:
     def printCurveInfo(self, geo):
         print("Curve Info")
         print(dir(geo))
-        print("IsArc     : ", geo.IsArc())
-        print("IsCircle  : ", geo.IsCircle())
-        print("IsEllipse : ", geo.IsEllipse())
+        print('IsArc     : ',geo.IsArc())
+        print('IsCircle  : ',geo.IsCircle())
+        print('IsEllipse : ',geo.IsEllipse())
+        print('IsPolyline : ',geo.IsPolyline())
         print(geo.CurvatureAt)
         print(dir(geo.CurvatureAt))
-        print(geo.SegmentCount)
-        print(geo.SegmentCurve)
-        print(dir(geo.SegmentCurve))
-        print(geo.SegmentCurveParameter)
-        print(dir(geo.SegmentCurveParameter))
-        print(geo.SegmentIndex)
-        print(dir(geo.SegmentIndex))
-        # cpc = geo.CreateControlPointCurve()
-        # print(dir(cpc))
+        if hasattr(geo,'SegmentCount') :
+           print(geo.SegmentCount)
+           print(geo.SegmentCurve)
+           print(dir(geo.SegmentCurve))
+           print(geo.SegmentCurveParameter)
+           print(dir(geo.SegmentCurveParameter))
+           print(geo.SegmentIndex)
+           print(dir(geo.SegmentIndex))
+        #cpc = geo.CreateControlPointCurve()
+        #print(dir(cpc))
         nc = geo.ToNurbsCurve()
         print(dir(nc))
 
