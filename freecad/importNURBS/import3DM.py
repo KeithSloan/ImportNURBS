@@ -256,6 +256,8 @@ class File3dm:
            # Create Part ToShape from profile
            # Create new Shape from Extrude of ToShape
            # Create Part::PythonFeature & Return
+           height = geo.PathStart.Z - geo.PathEnd.Z
+           print(f'Height : {height}')
            for i in range(geo.ProfileCount) :
                print(i)
                c = geo.Profile3d(i,0.0)
@@ -279,7 +281,26 @@ class File3dm:
                elif c.IsPolyline() == True :
                   # Call ToLine and create FreeCAD TopoShape from Line
                   print('Polyline')
-                  print('Not yet Handled')
+                  print(dir(c))
+                  l = c.ToPolyline()
+                  print(dir(l))
+                  print(l.SegmentCount)
+                  points = []
+                  for i in range(0,l.SegmentCount):
+                      print(l.PointAt(i))
+                      print(dir(l.PointAt(i)))
+                      p = l.PointAt(i)
+                      points.append((p.X, p.Y, p.Z))
+                  points.append(points[0])
+                  #wire = Draft.make_wire(points, closed=True, placement=None, \
+                  #       face=True, support=None)
+                  
+                  obj = doc.addObject("Part::FeaturePython","Extrusion")
+                  poly = Part.makePolygon(points)
+                  obj.Shape = poly
+                  #face = Part.Face(Part.Wire(poly))
+                  #obj.Shape = face.extrude(FreeCAD.Vector(0.0, 0.0, height))
+                  return
              
              
            print(geo.Profile3d)
