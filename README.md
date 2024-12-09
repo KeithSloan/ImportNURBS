@@ -20,6 +20,24 @@ You can find out the version FreeCAD is using by using
     FreeCAD | About freecad | Libraries 
 or
     Looking at the heading in FreeCAD python console   
+
+# Installing for FreeCAD 1.0.0 on MacOS
+
+* FreeCAD 1.0.0 on Mac uses Python 3.11
+  
+  Make sure Mac is also 3.11 using homebrew
+  
+  brew instal python@3.11
+
+* install rhino3dm in FreeCAD path
+
+- Start FreeCAD
+     - In python console
+        - import sys
+        - print(sys.path)
+          
+ - python3.11 -m pip install rhino3dm  --no-cache -t '/Applications/FreeCAD 1.0.0.app/Contents/Resources/lib/python3.11/site-packages'
+
   
 # Installation - Add on Manager
 
