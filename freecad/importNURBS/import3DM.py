@@ -149,8 +149,12 @@ class File3dm:
             # print(type(geo.Arc.Center))
             obj.Placement.Base = toFCvec(geo.Arc.Center)
             obj.Radius = geo.Radius
-            obj.Angle0 = startAngle = toFCangle(geo.Arc.Center, geo.PointAtStart)
-            obj.Angle1 = startAngle + geo.Arc.AngleDegrees
+            if int(FreeCAD.Version()[3].split()[0]) > 29603:
+                obj.Angle1 = startAngle = toFCangle(geo.Arc.Center, geo.PointAtStart)
+                obj.Angle2 = startAngle + geo.Arc.AngleDegree
+            else:
+                obj.Angle0 = startAngle = toFCangle(geo.Arc.Center, geo.PointAtStart)
+                obj.Angle1 = startAngle + geo.Arc.AngleDegrees
             # print(dir(geo))
             obj.recompute()
             return obj
