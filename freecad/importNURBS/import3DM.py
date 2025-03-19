@@ -93,7 +93,12 @@ class File3dm:
     def import_geometry(self, doc, geo):
         print("Geometry type")
         print(type(geo))
-
+        #################################################
+        # Check instances and create FC object
+        # Some return obj others not?
+        # Think they should all return obj
+        # Need create_surface
+        #################################################
         if isinstance(geo, r3.Brep):  # str(geo.ObjectType) == "ObjectType.Brep":
             print("Brep object")
             print("is solid : {}".format(geo.IsSolid))
@@ -328,7 +333,9 @@ class File3dm:
         if isinstance(geo, r3.NurbsSurface):
             print("NurbsSurface Object")
             print(dir(geo))
-            return self.create_surface(geo)
+            obj = doc.addObject("Part::Feature", "NurbsSurface")
+            obj.Shape = self.create_nurbs_surface(geo).toShape()
+            return obj
 
         if isinstance(geo, r3.PointCloud):
             print("PointCloud Object")
@@ -367,6 +374,11 @@ class File3dm:
         nc = geo.ToNurbsCurve()
         print(dir(nc))
 
+    ##########################################
+    #
+    # Create functions return a Part Shape
+    #
+    ###########################################    
     def create_curve(self, edge):
         nc = edge.ToNurbsCurve()
         # print("{} x {}".format(nu.Degree(0), nu.Degree(1)))
@@ -386,6 +398,11 @@ class File3dm:
         return bs
 
     def create_surface(self, surf):
+        print(f"Create Surface")
+        print(f"ToDO")
+        # create_nurbs_surface was being called.
+
+    def create_nurbs_surface(self, surf):
         nu = surf.ToNurbsSurface()
         print("{} x {}".format(nu.Degree(0), nu.Degree(1)))
         pts = []
