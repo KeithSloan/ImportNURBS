@@ -1,4 +1,8 @@
 
+#
+# Being replaced by ImportExport_3DM which add https://github.com/KeithSloan/ImportExport_3DM
+#
+
 # ImportNURBS
 
   Add Import of 3DM files to FreeCAD
