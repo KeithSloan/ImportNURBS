@@ -108,9 +108,12 @@ class File3dm:
             print("has {} surfaces".format(len(geo.Surfaces)))
             print("has {} edges".format(len(geo.Edges)))
             shapes = []
-            for i in range(len(geo.Faces)):
-                print(geo.Faces[i])
-                s = self.create_surface(geo.Faces[i])
+            #for i in range(len(geo.Faces)):
+            #    print(geo.Faces[i])
+            #    s = self.create_surface(geo.Faces[i])
+            for i in range(len(geo.Edges)):
+                print(geo.Edges[i])
+                s = self.create_curve(geo.Edges[i])
                 print(s)
                 shapes.append(s.toShape())
                 # print("Face {} has {} edges".format(i,len(geo.Faces[i].Edges)))
@@ -401,6 +404,7 @@ class File3dm:
         print(f"Create Surface")
         print(f"ToDO")
         # create_nurbs_surface was being called.
+        self.create_nurbs_surface(surf)
 
     def create_nurbs_surface(self, surf):
         nu = surf.ToNurbsSurface()
