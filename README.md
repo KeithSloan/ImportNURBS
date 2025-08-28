@@ -3,6 +3,8 @@
 ## Being replaced by ImportExport_3DM which adds export
 ## https://github.com/KeithSloan/ImportExport_3DM
 ##
+##    Which contains a copy of import3DM.py
+##
 
 # ImportNURBS
 
