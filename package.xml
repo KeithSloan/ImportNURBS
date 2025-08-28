@@ -2,6 +2,7 @@
 <package format="1" xmlns="https://wiki.freecad.org/Package_Metadata">
   <name>ImportNurbs workbench</name>
   <description>An external workbench for add importer for 3dm></description>
+  <icon>freecad/importNURBS/Resources/icons/ImportNURBSworkbench.svg</icon>
   <version>1.1 Beta</version>
   <date>2022-07-04</date>
   <maintainer email="keith@sloan-home.co.uk">Keith Sloan</maintainer>
@@ -14,7 +15,6 @@
     <workbench>
       <classname>ImportNURBSWorkbench</classname>
       <subdirectory>./</subdirectory>
-      <icon>freecad/ImportNURBS/Resources/icons/ImportNURBSworkbench.svg</icon>
       <freecadmin>0.19.3</freecadmin>
       <depend>rhino3dm</depend>
     </workbench>
