@@ -307,7 +307,7 @@ class File3dm:
                   #wire = Draft.make_wire(points, closed=True, placement=None, \
                   #       face=True, support=None)
                   
-                  obj = doc.addObject("Part::FeaturePython","Extrusion")
+                  obj = doc.addObject("Part::Feature","Extrusion")
                   poly = Part.makePolygon(points)
                   obj.Shape = poly
                   #face = Part.Face(Part.Wire(poly))
@@ -437,13 +437,12 @@ class File3dm:
         return bs
 
     def create_surface(self, surf):
-        print(f"Create Surface")
-        print(f"ToDO")
-        # create_nurbs_surface was being called.
-        self.create_nurbs_surface(surf)
-
-    def create_nurbs_surface(self, surf):
+        print(f"Create Surface {surf.ObjectType}")
         nu = surf.ToNurbsSurface()
+        return self.create_nurbs_surface(nu)
+
+    def create_nurbs_surface(self, nurbSurf):
+        nu = nurbSurf
         print("{} x {}".format(nu.Degree(0), nu.Degree(1)))
         pts = []
         weights = []
